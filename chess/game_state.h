@@ -32,34 +32,32 @@ inline bool is_bishop(piece p){ return ((p|1) == B_BISHOP); }
 inline bool is_queen(piece p){ return ((p|1) == B_QUEEN); }
 inline bool is_king(piece p){ return ((p|1) == B_KING); }
 
-string to_char(piece p, bool shorthand=true){
-    if(is_pawn(p)){ return shorthand? "" : "P"; }
+inline string to_char(piece p, bool shorthand=true){
+    if(is_pawn(p)){ return (shorthand? "" : "P"); }
     if(is_rook(p)){ return "R"; }
     if(is_knight(p)){ return "N"; }
     if(is_bishop(p)){ return "B"; }
     if(is_queen(p)){ return "Q"; }
     if(is_king(p)){ return "K"; }
+    return "?";
 }
 
-ostream& operator<<(ostream& os, piece p){
-
+inline string to_display_char(piece p){
     switch(p){
-        case W_PAWN:   os << "\u2659"; break;
-        case W_ROOK:   os << "\u2656"; break;
-        case W_KNIGHT: os << "\u2658"; break;
-        case W_BISHOP: os << "\u2657"; break;
-        case W_QUEEN:  os << "\u2655"; break;
-        case W_KING:   os << "\u2654"; break;
-        case B_PAWN:   os << "\u265f"; break;
-        case B_ROOK:   os << "\u265c"; break;
-        case B_KNIGHT: os << "\u265e"; break;
-        case B_BISHOP: os << "\u265d"; break;
-        case B_QUEEN:  os << "\u265b"; break;
-        case B_KING:   os << "\u265a"; break;
-        default:  os << '?';
+        case W_PAWN:   return "\u2659";
+        case W_ROOK:   return "\u2656";
+        case W_KNIGHT: return "\u2658";
+        case W_BISHOP: return "\u2657";
+        case W_QUEEN:  return "\u2655";
+        case W_KING:   return "\u2654";
+        case B_PAWN:   return "\u265f";
+        case B_ROOK:   return "\u265c";
+        case B_KNIGHT: return "\u265e";
+        case B_BISHOP: return "\u265d";
+        case B_QUEEN:  return "\u265b";
+        case B_KING:   return "\u265a";
+        default: return "?";
     }
-
-    return os;
 }
 
 // data vector elements:
@@ -138,7 +136,7 @@ struct GameState {
     friend ostream& operator<<(ostream& os, const GameState& s);
 };
 
-ostream& operator<<(ostream& os, GameState const& s);
+string to_statestring(data_vector s);
 
 
 #endif // GAME_STATE_H

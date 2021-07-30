@@ -2,7 +2,7 @@
 #include <cassert>
 #include <array>
 
-#include "game_logic.h";
+#include "game_logic.h"
 
 using namespace std;
 
@@ -68,19 +68,21 @@ void apply_move(GameState& gs, move_vector m){
     x1 = dest_x(m);
     y1 = dest_y(m);
     
-    // perform quick sanity check:
+    
     piece src_p = gs.get_piece(x0,y0);
     piece dest_p = gs.get_piece(x1,y1);
     piece cap_p  = captured_piece(m);
     color src_color = get_color(src_p);
     color oth_color = !src_color;
+    
+    // perform quick sanity check:
     assert( src_p );
     assert( dest_p == captured_piece(m) );
 
     if(cap_p){
         assert(get_color(cap_p) == oth_color && !is_king(cap_p));
 
-        // TODO: handle pawn promotion logics
+        // TODO: handle pawn promotion logics (pawn captures self)
         
         if(!dest_p){
             // perform an en passant capture:
@@ -159,20 +161,56 @@ void apply_move(GameState& gs, move_vector m){
         }
     } else {
         // perform a simple move:
-        
+        gs.set_piece(x0, y0, NONE);
+        gs.set_piece(x1, y1, src_p);
     }
 
-
-    // clear enpassant bits and update check status:
+    // clear enpassant bits and update king check status:
     int kx, ky;
     if(src_color == WHITE){
+
         clear_w_enpassant(gs.state);
+
+        // handle setting of enpassant:
+        if((src_p == W_PAWN) && (y0 == 1) && (y1 == 3)){
+            set_w_enpassant(gs.state, x0);
+        }
+
+        // get/update king position:
         kx = w_king_x(gs.king_pos);
         ky = w_king_y(gs.king_pos);
+        assert(gs.get_piece(kx,ky) == W_KING);
+        if(src_p == W_KING){
+            kx = x1;
+            ky = y1;
+            set_w_king_pos(gs.king_pos,kx,ky);
+        }
+
+        // ensure king is not in check:
+        assert(!is_checked(gs, kx, ky, oth_color));
+        clear_b_check(gs.state);
+
     } else {
+
         clear_b_enpassant(gs.state);
+        
+        // handle setting of enpassant:
+        if((src_p == B_PAWN) && (y0 == 6) && (y1 == 4)){
+            set_b_enpassant(gs.state, x0);
+        }
+
+        // get/update king position:
         kx = b_king_x(gs.king_pos);
         ky = b_king_y(gs.king_pos);
+        if(src_p == B_KING){
+            kx = x1;
+            ky = y1;
+            set_b_king_pos(gs.king_pos,kx,ky);
+        }
+
+        // ensure king is not in check:
+        assert(!is_checked(gs, kx, ky, oth_color));
+        clear_b_check(gs.state);
     }
 }
 
@@ -218,7 +256,7 @@ bool is_checked(GameState& gs, int x, int y, color attacker){
         ++x1; ++y1;
     }
     x1 = x+1; y1 = y-1; // SE
-    while(x1 < 8 & y >= 0){
+    while(x1 < 8 && y >= 0){
         p = gs.get_piece(x1,y1);
         if(get_color(p) != attacker){ break; }
         else if(is_bishop(p) || is_queen(p)){ return true; }
@@ -246,7 +284,7 @@ bool is_checked(GameState& gs, int x, int y, color attacker){
     }
 
     // check knights:
-    const int KNIGHT_X[] = { 2, 1, -1, -2. -2, -1,  1,  2 };
+    const int KNIGHT_X[] = { 2, 1, -1, -2, -2, -1,  1,  2 };
     const int KNIGHT_Y[] = { 1, 2,  2,  1, -1, -2, -2, -1 };
     for(int i = 0; i < 8; ++i){
         x1 = x+KNIGHT_X[i];

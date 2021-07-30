@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include <array>
+#include <sstream>
 #include <iostream>
 
 GameState::GameState(){
@@ -33,9 +34,9 @@ ostream& operator<<(ostream& os, GameState const& s){
         for(int x = 0; x < 8; ++x){
             piece p = s.get_piece(x,y);
             if(p != NONE){ 
-                os << ' ' << p; 
+                os << ' ' << to_display_char(p); 
             } else { 
-                os << ' ' << (((x+y)&1)? '#' : '.');
+                os << ' ' << (((x+y)&1)? '.' : '#');
             }
         }
         os << endl;
@@ -43,4 +44,31 @@ ostream& operator<<(ostream& os, GameState const& s){
     os << ' ';
     for(int x = 0; x < 8; ++x){ os << ' ' << (char) ('a'+x); }
     return os;
+}
+
+string to_statestring(data_vector s){
+    stringstream ss;
+    ss << "------White------" << endl
+       << "can_rcastle: " << (bool) w_can_rcastle(s) << endl
+       << "can_lcastle: " << (bool) w_can_lcastle(s) << endl
+       << "check: " << (bool) w_check(s) << endl
+       << "checkmate: " << (bool) w_checkmate(s) << endl
+       << "en_passant: [ ";
+    for(int i = 0; i < 8; ++i){ 
+        if(w_enpassant(s,i)){ ss << i << " "; }
+    }
+    ss << "]" << endl;
+
+    ss << "------Black------" << endl
+       << "can_rcastle: " << (bool) b_can_rcastle(s) << endl
+       << "can_lcastle: " << (bool) b_can_lcastle(s) << endl
+       << "check: " << (bool) b_check(s) << endl
+       << "checkmate: " << (bool) b_checkmate(s) << endl
+       << "en_passant: [ ";
+    for(int i = 0; i < 8; ++i){ 
+        if(b_enpassant(s,i)){ ss << i << " "; }
+    }
+    ss << "]" << endl;
+
+    return ss.str();
 }
