@@ -26,6 +26,11 @@ GameState::GameState(){
 
     // initialize state data vector:
     state = W_CAN_LCASTLE | W_CAN_RCASTLE | B_CAN_LCASTLE | B_CAN_RCASTLE;
+
+    // initialize king position vector:
+    king_pos = 0;
+    set_w_king_pos(king_pos, 4, 0);
+    set_b_king_pos(king_pos, 4, 7);
 }
 
 ostream& operator<<(ostream& os, GameState const& s){
@@ -35,7 +40,7 @@ ostream& operator<<(ostream& os, GameState const& s){
             piece p = s.get_piece(x,y);
             if(p != NONE){ 
                 os << ' ' << to_display_char(p); 
-            } else { 
+            } else {
                 os << ' ' << (((x+y)&1)? '.' : '#');
             }
         }
@@ -55,7 +60,7 @@ string to_statestring(data_vector s){
        << "checkmate: " << (bool) w_checkmate(s) << endl
        << "en_passant: [ ";
     for(int i = 0; i < 8; ++i){ 
-        if(w_enpassant(s,i)){ ss << i << " "; }
+        if(w_en_passant(s,i)){ ss << i << " "; }
     }
     ss << "]" << endl;
 
@@ -66,7 +71,7 @@ string to_statestring(data_vector s){
        << "checkmate: " << (bool) b_checkmate(s) << endl
        << "en_passant: [ ";
     for(int i = 0; i < 8; ++i){ 
-        if(b_enpassant(s,i)){ ss << i << " "; }
+        if(b_en_passant(s,i)){ ss << i << " "; }
     }
     ss << "]" << endl;
 

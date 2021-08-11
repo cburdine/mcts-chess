@@ -1,4 +1,4 @@
-#ifndef GAME_SHATE_H
+#ifndef GAME_STATE_H
 #define GAME_STATE_H
 
 #include <iostream>
@@ -80,8 +80,8 @@ inline bool w_check(data_vector s){ return (W_CHECK & s); }
 inline bool b_check(data_vector s){ return (B_CHECK & s); }
 inline bool w_checkmate(data_vector s){ return (W_CHECKMATE & s); }
 inline bool b_checkmate(data_vector s){ return (B_CHECKMATE & s); }
-inline bool w_enpassant(data_vector s, int x){ return (1<<(8+x)) & s; }
-inline bool b_enpassant(data_vector s, int x){ return (1<<(16+x)) & s; }
+inline bool w_en_passant(data_vector s, int x){ return (1<<(8+x)) & s; }
+inline bool b_en_passant(data_vector s, int x){ return (1<<(16+x)) & s; }
 
 inline void set_w_can_rcastle(data_vector& s){ s |= W_CAN_RCASTLE; }
 inline void set_w_can_lcastle(data_vector& s){ s |= W_CAN_LCASTLE; }
@@ -91,8 +91,8 @@ inline void set_w_check(data_vector& s){ s |= W_CHECK; }
 inline void set_b_check(data_vector& s){ s |= B_CHECK; }
 inline void set_w_checkmate(data_vector& s){ s |= W_CHECKMATE; }
 inline void set_b_checkmate(data_vector& s){ s |= B_CHECKMATE; }
-inline void set_w_enpassant(data_vector& s, int x){ s |= (1<<(8+x)); }
-inline void set_b_enpassant(data_vector& s, int x){ s |= (1<<(16+x)); }
+inline void set_w_en_passant(data_vector& s, int x){ s |= (1<<(8+x)); }
+inline void set_b_en_passant(data_vector& s, int x){ s |= (1<<(16+x)); }
 
 inline void clear_w_can_rcastle(data_vector& s){ s &= ~W_CAN_RCASTLE; }
 inline void clear_w_can_lcastle(data_vector& s){ s &= ~W_CAN_LCASTLE; }
@@ -102,8 +102,8 @@ inline void clear_w_check(data_vector& s){ s &= ~W_CHECK; }
 inline void clear_b_check(data_vector& s){ s &= ~B_CHECK; }
 inline void clear_w_checkmate(data_vector& s){ s &= ~W_CHECKMATE; }
 inline void clear_b_checkmate(data_vector& s){ s &= ~B_CHECKMATE; }
-inline void clear_w_enpassant(data_vector& s){ s &= ~(255<<8); }
-inline void clear_b_enpassant(data_vector& s){ s &= ~(255<<16); }
+inline void clear_w_en_passant(data_vector& s){ s &= ~(255<<8); }
+inline void clear_b_en_passant(data_vector& s){ s &= ~(255<<16); }
 
 typedef int position_vector;
 
@@ -135,6 +135,18 @@ struct GameState {
     
     friend ostream& operator<<(ostream& os, const GameState& s);
 };
+
+/*
+struct GameStateHasher {
+    size_t operator()(const GameState& gs) const {
+        size_t h = gs.state;
+        for (auto p : gs.board){
+            h ^= std::hash<int>{}(p)  + 0x9e3779b9 + (h << 6) + (h >> 2); 
+        }
+        return h;
+    }
+};
+*/
 
 string to_statestring(data_vector s);
 
