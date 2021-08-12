@@ -71,6 +71,7 @@ const int W_CHECK =       (1<<4);
 const int B_CHECK =       (1<<5);
 const int W_CHECKMATE =   (1<<6);
 const int B_CHECKMATE =   (1<<7);
+const int DRAW =          (1<<24);
 
 inline bool w_can_rcastle(data_vector s){ return (W_CAN_RCASTLE & s); }
 inline bool w_can_lcastle(data_vector s){ return (W_CAN_LCASTLE & s); }
@@ -82,6 +83,7 @@ inline bool w_checkmate(data_vector s){ return (W_CHECKMATE & s); }
 inline bool b_checkmate(data_vector s){ return (B_CHECKMATE & s); }
 inline bool w_en_passant(data_vector s, int x){ return (1<<(8+x)) & s; }
 inline bool b_en_passant(data_vector s, int x){ return (1<<(16+x)) & s; }
+inline bool draw(data_vector s){ return (DRAW & s); }
 
 inline void set_w_can_rcastle(data_vector& s){ s |= W_CAN_RCASTLE; }
 inline void set_w_can_lcastle(data_vector& s){ s |= W_CAN_LCASTLE; }
@@ -93,6 +95,7 @@ inline void set_w_checkmate(data_vector& s){ s |= W_CHECKMATE; }
 inline void set_b_checkmate(data_vector& s){ s |= B_CHECKMATE; }
 inline void set_w_en_passant(data_vector& s, int x){ s |= (1<<(8+x)); }
 inline void set_b_en_passant(data_vector& s, int x){ s |= (1<<(16+x)); }
+inline void set_draw(data_vector& s){ s |= DRAW; }
 
 inline void clear_w_can_rcastle(data_vector& s){ s &= ~W_CAN_RCASTLE; }
 inline void clear_w_can_lcastle(data_vector& s){ s &= ~W_CAN_LCASTLE; }
@@ -104,6 +107,7 @@ inline void clear_w_checkmate(data_vector& s){ s &= ~W_CHECKMATE; }
 inline void clear_b_checkmate(data_vector& s){ s &= ~B_CHECKMATE; }
 inline void clear_w_en_passant(data_vector& s){ s &= ~(255<<8); }
 inline void clear_b_en_passant(data_vector& s){ s &= ~(255<<16); }
+inline void clear_draw(data_vector& s){ s &= ~DRAW; }
 
 typedef int position_vector;
 

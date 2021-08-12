@@ -1,2 +1,5 @@
 env/
 bin/*
+.vscode
+*.game
+*.txt

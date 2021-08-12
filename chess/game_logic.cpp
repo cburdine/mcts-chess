@@ -36,10 +36,10 @@ string to_movestring(GameState& gs, move_vector m, bool shorthand){
     bool is_check, is_mate;
     if(is_black(src_p)){
         is_check = w_check(move_gs.state);
-        is_mate = w_checkmate(move_gs.state); // <- fix this
+        is_mate = w_checkmate(move_gs.state);
     } else {
         is_check = b_check(move_gs.state);
-        is_mate = b_checkmate(move_gs.state);// <- fix this
+        is_mate = b_checkmate(move_gs.state);
     }
 
     // castling notation:
@@ -136,14 +136,14 @@ void apply_move(GameState& gs, move_vector m){
         // perform castle:
         gs.set_piece(4,csl_y,NONE);
         gs.set_piece(7,csl_y,NONE);
-        gs.set_piece(5,csl_y,B_ROOK);
-        gs.set_piece(6,csl_y,B_KING);
+        x1 = 6; // <-- set x2 to account for king movement
+
         if(src_color == WHITE){
-            clear_w_can_lcastle(gs.state);
-            clear_w_can_rcastle(gs.state);
+            gs.set_piece(5,csl_y,W_ROOK);
+            gs.set_piece(6,csl_y,W_KING);
         } else {
-            clear_b_can_lcastle(gs.state);
-            clear_b_can_rcastle(gs.state);
+            gs.set_piece(5,csl_y,B_ROOK);
+            gs.set_piece(6,csl_y,B_KING);
         }
 
     } else if(is_lcastle(m)){
@@ -153,7 +153,8 @@ void apply_move(GameState& gs, move_vector m){
 
         // validate castling positions:
         assert(x0 == 4 && y0 == csl_y && x1 == 0 && y1 == csl_y);
-        assert(src_p == B_KING && dest_p == B_ROOK);
+        assert(src_p ==  ((src_color == WHITE)? W_KING : B_KING));
+        assert(dest_p == ((src_color == WHITE)? W_ROOK : B_ROOK));
         assert((!gs.get_piece(1,7)) && (!gs.get_piece(2,7)) && (!gs.get_piece(3,7)));
         assert(get_color(src_p) == get_color(dest_p));
         assert(is_king(src_p));
@@ -168,15 +169,14 @@ void apply_move(GameState& gs, move_vector m){
         // perform castle:
         gs.set_piece(4,csl_y,NONE);
         gs.set_piece(0,csl_y,NONE);
-        gs.set_piece(3,csl_y,B_ROOK);
-        gs.set_piece(2,csl_y,B_KING);
+        x1 = 2; // <-- set x2 to account for king movement
 
         if(src_color == WHITE){
-            clear_w_can_lcastle(gs.state);
-            clear_w_can_rcastle(gs.state);
+            gs.set_piece(3,csl_y,W_ROOK);
+            gs.set_piece(2,csl_y,W_KING);
         } else {
-            clear_b_can_lcastle(gs.state);
-            clear_b_can_rcastle(gs.state);
+            gs.set_piece(3,csl_y,B_ROOK);
+            gs.set_piece(2,csl_y,B_KING);
         }
     } else {
         // perform a simple move:
@@ -185,7 +185,6 @@ void apply_move(GameState& gs, move_vector m){
     }
 
     // clear enpassant bits and update king check status:
-    int kx, ky;
     if(src_color == WHITE){
 
         clear_w_en_passant(gs.state);
@@ -193,21 +192,33 @@ void apply_move(GameState& gs, move_vector m){
         // handle setting of enpassant:
         if((src_p == W_PAWN) && (y0 == 1) && (y1 == 3)){
             set_w_en_passant(gs.state, x0);
-        }
 
-        // get/update king position:
-        kx = w_king_x(gs.king_pos);
-        ky = w_king_y(gs.king_pos);
-        assert(gs.get_piece(kx,ky) == W_KING);
-        if(src_p == W_KING){
-            kx = x1;
-            ky = y1;
-            set_w_king_pos(gs.king_pos,kx,ky);
+        // get/update king position and castling bits:
+        } else if(src_p == W_KING){
+            set_w_king_pos(gs.king_pos,x1,y1);
+            clear_w_can_lcastle(gs.state);
+            clear_w_can_rcastle(gs.state);
+        
+        // update castling bits for movement:
+        } else if(src_p == W_ROOK && y0 == 0){
+            if(x0 == 0){
+                clear_w_can_lcastle(gs.state);
+            } else if(x0 == 7){
+                clear_w_can_rcastle(gs.state);
+            }
+
+        // update opponent's castling bits for a capture:
+        } else if(cap_p == B_ROOK && y1 == 7){
+            if(x1 == 0){
+                clear_b_can_lcastle(gs.state);
+            } else if(x1 == 7){
+                clear_b_can_rcastle(gs.state);
+            }
         }
 
         // ensure king is not in check:
-        assert(!is_checked(gs, kx, ky, oth_color));
-        clear_b_check(gs.state);
+        assert(!is_checked(gs, w_king_x(gs.king_pos), w_king_y(gs.king_pos), oth_color));
+        clear_w_check(gs.state);
 
     } else {
 
@@ -216,19 +227,32 @@ void apply_move(GameState& gs, move_vector m){
         // handle setting of en passant bits:
         if((src_p == B_PAWN) && (y0 == 6) && (y1 == 4)){
             set_b_en_passant(gs.state, x0);
-        }
         
         // get/update king position:
-        kx = b_king_x(gs.king_pos);
-        ky = b_king_y(gs.king_pos);
-        if(src_p == B_KING){
-            kx = x1;
-            ky = y1;
-            set_b_king_pos(gs.king_pos,kx,ky);
+        } else if(src_p == B_KING){
+            set_b_king_pos(gs.king_pos,x1,y1);
+            clear_b_can_lcastle(gs.state);
+            clear_b_can_rcastle(gs.state);
+
+        // update castling bits:
+        } else if(src_p == B_ROOK && y0 == 7){
+            if(x0 == 0){
+                clear_b_can_lcastle(gs.state);
+            } else if(x0 == 7){
+                clear_b_can_rcastle(gs.state);
+            }
+        
+        // update opponent's castling bits for a capture:
+        } else if(cap_p == W_ROOK && y1 == 0){
+            if(x1 == 0){
+                clear_w_can_lcastle(gs.state);
+            } else if(x1 == 7){
+                clear_w_can_rcastle(gs.state);
+            }
         }
 
         // ensure king is not in check:
-        assert(!is_checked(gs, kx, ky, oth_color));
+        assert(!is_checked(gs, b_king_x(gs.king_pos), b_king_y(gs.king_pos), oth_color));
         clear_b_check(gs.state);
     }
 }
@@ -526,8 +550,8 @@ bool is_checked(GameState& gs, int x, int y, color attacker){
         if(yt > 1 && ( (x < 7 && gs.get_piece(x+1,yt) == W_PAWN) 
                     || (x > 0 && gs.get_piece(x-1,yt) == W_PAWN))){
             return true;
-        } else if (abs(w_king_x(gs.king_pos) - x) < 1 
-                && abs(w_king_y(gs.king_pos)-y) < 1){
+        } else if (abs(w_king_x(gs.king_pos) - x) <= 1 
+                && abs(w_king_y(gs.king_pos)-y) <= 1){
             assert(gs.get_piece(w_king_x(gs.king_pos),w_king_y(gs.king_pos)) == W_KING);
             return true;
         }
@@ -537,8 +561,8 @@ bool is_checked(GameState& gs, int x, int y, color attacker){
         if (yt < 6 && (  (x < 7 && gs.get_piece(x+1,yt) == B_PAWN)
                      ||  (x > 0 && gs.get_piece(x-1,yt) == B_PAWN))){
             return true;
-        } else if( abs(b_king_x(gs.king_pos) - x) < 1 
-                && abs(b_king_y(gs.king_pos)-y) < 1){
+        } else if( abs(b_king_x(gs.king_pos)-x) <= 1 
+                && abs(b_king_y(gs.king_pos)-y) <= 1){
             assert(gs.get_piece(b_king_x(gs.king_pos),b_king_y(gs.king_pos)) == B_KING);
             return true;
         }
@@ -566,6 +590,7 @@ vector<move_vector> get_valid_moves(GameState& gs, color player){
     // iterate over board:
     int i, x, y;
     piece p;
+    bool only_kings_left = true;
     for(i = 0; i < 64; ++i){
         p = gs.board[i];
         if(p && get_color(p) == player){
@@ -585,6 +610,24 @@ vector<move_vector> get_valid_moves(GameState& gs, color player){
                 assert(is_king(p));
                 add_valid_king_moves(gs, player, m, x, y, valid_moves);
             }
+        }
+        if(only_kings_left && p && !is_king(p)){ only_kings_left = false; }
+    }
+
+    // if only kings are left, return a draw state:
+    if(only_kings_left){
+        set_draw(gs.state);
+        return vector<move_vector>();
+
+    } else if(valid_moves.empty()){
+
+        // if no moves are available, set draw or checkmate status:
+        if(player == WHITE && w_check(gs.state)){
+            set_w_checkmate(gs.state);
+        } else if(player == BLACK && b_check(gs.state)) {
+            set_b_checkmate(gs.state);
+        } else {
+            set_draw(gs.state);
         }
     }
 
@@ -612,7 +655,7 @@ inline void add_valid_pawn_moves(GameState& gs, color player, move_vector base_m
     for(int dx = -1; dx <= 1; dx += 2){
         xt = x+dx;
         // check capture in dx direction:
-        if(0 <= xt && xt < 8 && (cap_p = gs.get_piece(xt,yt)) && get_color(cap_p) != player){
+        if(0 <= xt && xt < 8 && (cap_p = gs.get_piece(xt,yt)) && get_color(cap_p) != player && !is_king(cap_p)){
             m2 = base_m;
             set_dest_pos(m2,xt,yt);
             set_captured_piece(m2, cap_p);
@@ -687,14 +730,14 @@ inline void add_valid_rectilinear_moves(GameState& gs, color player, move_vector
             cap_p = gs.get_piece(xt, yt);
             if(cap_p){
                 set_captured_piece(m2, cap_p);
-                if(get_color(cap_p) != player && !move_will_check_king(gs, m2, !player)){ 
+                if(get_color(cap_p) != player && !is_king(cap_p) && !move_will_check_king(gs, m2, player)){ 
                     moves.push_back(m2);
                 }
                 break;
             }
             if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
             xt += dx;
-            yt += dx;
+            yt += dy;
         }
     }
 }
@@ -721,7 +764,7 @@ inline void add_valid_knight_moves(GameState& gs, color player, move_vector base
             set_dest_pos(m2, xt, yt);
             if(cap_p){
                 set_captured_piece(m2, cap_p);
-                if(get_color(cap_p) != player && !move_will_check_king(gs, m2, player)){
+                if(get_color(cap_p) != player && !is_king(cap_p) && !move_will_check_king(gs, m2, player)){
                     moves.push_back(m2);
                 }
             } else if(!move_will_check_king(gs, m2, player)){
@@ -754,14 +797,14 @@ inline void add_valid_diagonal_moves(GameState& gs, color player, move_vector ba
             cap_p = gs.get_piece(xt, yt);
             if(cap_p){
                 set_captured_piece(m2, cap_p);
-                if(get_color(cap_p) != player && !move_will_check_king(gs, m2, player)){ 
+                if(get_color(cap_p) != player && !is_king(cap_p) && !move_will_check_king(gs, m2, player)){ 
                     moves.push_back(m2);
                 }
                 break;
             }
             if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
             xt += dx;
-            yt += dx;
+            yt += dy;
         }
     }
 }
@@ -790,7 +833,7 @@ inline void add_valid_king_moves(GameState& gs, color player, move_vector base_m
             cap_p = gs.get_piece(xt, yt);
             if(cap_p){ 
                 set_captured_piece(m2, cap_p);
-                if(get_color(cap_p) != player && !move_will_check_king(gs, m2, player)){ 
+                if(get_color(cap_p) != player && !is_king(cap_p) && !move_will_check_king(gs, m2, player)){ 
                     moves.push_back(m2);
                 }
             } else if(!move_will_check_king(gs, m2, player)) {
@@ -799,7 +842,34 @@ inline void add_valid_king_moves(GameState& gs, color player, move_vector base_m
         }
     }
 
-    // TODO: check for valid castling moves:
+    // check for valid left castling moves:
+    if((player == WHITE && w_can_lcastle(gs.state)) || (player == BLACK && b_can_lcastle(gs.state)) ){
+        assert(y == 0 || y == 7);
+        assert(is_rook(gs.get_piece(0,y)));
+        if(  !gs.get_piece(1,y) && !gs.get_piece(2,y) && !gs.get_piece(3,y)
+          && !is_checked(gs,2,y,!player) && !is_checked(gs,3,y,!player) && !is_checked(gs,4,y,!player) ){
+            
+            m2 = base_m;
+            assert(is_rook(gs.get_piece(0,y)));
+            set_dest_pos(m2,0,y);
+            set_lcastle(m2);
+            moves.push_back(m2);
+        }
+    }
+    // check for valid right castling moves:
+    if((player == WHITE && w_can_rcastle(gs.state)) || (player == BLACK && b_can_rcastle(gs.state)) ){
+        assert(y == 0 || y == 7);
+        assert(is_rook(gs.get_piece(7,y)));
+        if(  !gs.get_piece(5,y) && !gs.get_piece(6,y)
+          && !is_checked(gs,4,y,!player) && !is_checked(gs,5,y,!player) && !is_checked(gs,6,y,!player) ){
+            
+            m2 = base_m;
+            assert(is_rook(gs.get_piece(7,y)));
+            set_dest_pos(m2,7,y);
+            set_rcastle(m2);
+            moves.push_back(m2);
+        }
+    }
 }
 
 bool move_will_check_king(GameState& gs, move_vector m, color king_color){
