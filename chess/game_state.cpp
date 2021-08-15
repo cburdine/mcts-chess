@@ -2,6 +2,7 @@
 #include <array>
 #include <sstream>
 #include <iostream>
+#include <cassert>
 
 GameState::GameState(){
 
@@ -51,6 +52,13 @@ ostream& operator<<(ostream& os, GameState const& s){
     return os;
 }
 
+bool operator==(const GameState& lhs, const GameState& rhs){
+    return (lhs.board == rhs.board 
+         && lhs.king_pos == rhs.king_pos 
+         && lhs.state == rhs.state );
+}
+
+
 string to_statestring(data_vector s){
     stringstream ss;
     ss << "------White------" << endl
@@ -58,22 +66,22 @@ string to_statestring(data_vector s){
        << "can_lcastle: " << (bool) w_can_lcastle(s) << endl
        << "check: " << (bool) w_check(s) << endl
        << "checkmate: " << (bool) w_checkmate(s) << endl
-       << "en_passant: [ ";
-    for(int i = 0; i < 8; ++i){ 
-        if(w_en_passant(s,i)){ ss << i << " "; }
-    }
-    ss << "]" << endl;
+       << "draw: " << (bool) draw(s) << endl
+       << "en_passant: ";
+    if(w_en_passant(s)){ ss << w_en_passant_x(s); }
+    else{ assert(w_en_passant_x(s) == 0); }
+    ss << endl;
 
     ss << "------Black------" << endl
        << "can_rcastle: " << (bool) b_can_rcastle(s) << endl
        << "can_lcastle: " << (bool) b_can_lcastle(s) << endl
        << "check: " << (bool) b_check(s) << endl
        << "checkmate: " << (bool) b_checkmate(s) << endl
-       << "en_passant: [ ";
-    for(int i = 0; i < 8; ++i){ 
-        if(b_en_passant(s,i)){ ss << i << " "; }
-    }
-    ss << "]" << endl;
+       << "draw: " << (bool) draw(s) << endl
+       << "en_passant: ";
+    if(b_en_passant(s)){ ss << b_en_passant_x(s); }
+    else{ assert(b_en_passant_x(s) == 0); }
+    ss << endl;
 
     return ss.str();
 }

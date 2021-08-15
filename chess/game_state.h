@@ -71,7 +71,9 @@ const int W_CHECK =       (1<<4);
 const int B_CHECK =       (1<<5);
 const int W_CHECKMATE =   (1<<6);
 const int B_CHECKMATE =   (1<<7);
-const int DRAW =          (1<<24);
+const int W_EN_PASSANT =  (1<<8);
+const int B_EN_PASSANT =  (1<<12);
+const int DRAW =          (1<<17);
 
 inline bool w_can_rcastle(data_vector s){ return (W_CAN_RCASTLE & s); }
 inline bool w_can_lcastle(data_vector s){ return (W_CAN_LCASTLE & s); }
@@ -81,8 +83,11 @@ inline bool w_check(data_vector s){ return (W_CHECK & s); }
 inline bool b_check(data_vector s){ return (B_CHECK & s); }
 inline bool w_checkmate(data_vector s){ return (W_CHECKMATE & s); }
 inline bool b_checkmate(data_vector s){ return (B_CHECKMATE & s); }
-inline bool w_en_passant(data_vector s, int x){ return (1<<(8+x)) & s; }
-inline bool b_en_passant(data_vector s, int x){ return (1<<(16+x)) & s; }
+
+inline bool w_en_passant(data_vector s){ return (W_EN_PASSANT & s); }
+inline int  w_en_passant_x(data_vector s){ return (s>>9) & 7; }
+inline bool b_en_passant(data_vector s){ return (B_EN_PASSANT & s); }
+inline int  b_en_passant_x(data_vector s){ return (s>>13) & 7; }
 inline bool draw(data_vector s){ return (DRAW & s); }
 
 inline void set_w_can_rcastle(data_vector& s){ s |= W_CAN_RCASTLE; }
@@ -93,8 +98,10 @@ inline void set_w_check(data_vector& s){ s |= W_CHECK; }
 inline void set_b_check(data_vector& s){ s |= B_CHECK; }
 inline void set_w_checkmate(data_vector& s){ s |= W_CHECKMATE; }
 inline void set_b_checkmate(data_vector& s){ s |= B_CHECKMATE; }
-inline void set_w_en_passant(data_vector& s, int x){ s |= (1<<(8+x)); }
-inline void set_b_en_passant(data_vector& s, int x){ s |= (1<<(16+x)); }
+
+inline void set_w_en_passant_x(data_vector& s, int x){ s = (s & ~(7<<9 )) | (x<<9)  | W_EN_PASSANT; }
+inline void set_b_en_passant_x(data_vector& s, int x){ s = (s & ~(7<<13)) | (x<<13) | B_EN_PASSANT; }
+
 inline void set_draw(data_vector& s){ s |= DRAW; }
 
 inline void clear_w_can_rcastle(data_vector& s){ s &= ~W_CAN_RCASTLE; }
@@ -105,9 +112,10 @@ inline void clear_w_check(data_vector& s){ s &= ~W_CHECK; }
 inline void clear_b_check(data_vector& s){ s &= ~B_CHECK; }
 inline void clear_w_checkmate(data_vector& s){ s &= ~W_CHECKMATE; }
 inline void clear_b_checkmate(data_vector& s){ s &= ~B_CHECKMATE; }
-inline void clear_w_en_passant(data_vector& s){ s &= ~(255<<8); }
-inline void clear_b_en_passant(data_vector& s){ s &= ~(255<<16); }
+inline void clear_w_en_passant(data_vector& s){ s &= ~((7<<9) | W_EN_PASSANT); }
+inline void clear_b_en_passant(data_vector& s){ s &= ~((7<<13) | B_EN_PASSANT); }
 inline void clear_draw(data_vector& s){ s &= ~DRAW; }
+inline void clear_final_status_bits(data_vector& s){ s &= ~(DRAW | W_CHECKMATE | B_CHECKMATE); }
 
 typedef int position_vector;
 
@@ -118,7 +126,6 @@ inline int b_king_y(position_vector v){ return (v>>9) & 7; }
 
 inline void set_w_king_pos(position_vector& v, int x, int y){ v = x | (y<<3) | (v & (~63)); }
 inline void set_b_king_pos(position_vector& v, int x, int y){ v = (x<<6) | (y<<9) | (v & ~(63<<6)); }
-
 
 struct GameState {
    
@@ -138,6 +145,7 @@ struct GameState {
     }
     
     friend ostream& operator<<(ostream& os, const GameState& s);
+    friend bool operator==(const GameState& lhs, const GameState& rhs);
 };
 
 /*
