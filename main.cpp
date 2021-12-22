@@ -46,7 +46,7 @@ int main(){
 
         state_history.push_back(gs);
         move_history.push_back(m);
-
+        
         apply_move(gs, m);
         assert(!draw(gs.state));
     }
