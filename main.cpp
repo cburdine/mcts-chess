@@ -4,7 +4,7 @@
 
 #include "chess/game_state.h"
 #include "chess/game_logic.h"
-#include "mcts/mcts.h"
+#include "chess_mcts.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -12,7 +12,7 @@ using namespace std;
 
 int main(){
 
-    for(int t = 1000; t < 10000; ++t){
+    /* for(int t = 1000; t < 10000; ++t){
 
     int seed = t;
     cout << "seed: " << seed << endl;
@@ -22,7 +22,16 @@ int main(){
 
     MCTS<int,int> test();
 
+    */
+
     GameState gs = GameState();
+
+    auto mcts = ChessUniformMCTS(gs, WHITE);
+    cout << gs << endl;
+
+    mcts.run(10000);
+
+    /*
     vector<move_vector> move_history = vector<move_vector>();
     vector<GameState> state_history = vector<GameState>();
 
@@ -79,6 +88,7 @@ int main(){
     assert(state_history.empty());
 
     }
+    */
 
     return 0;
 }

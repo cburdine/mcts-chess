@@ -223,9 +223,10 @@ void apply_move(GameState& gs, move_vector m){
             } else if(x0 == 7){
                 clear_w_can_rcastle(gs.state);
             }
+        }
         
         // update opponent's castling bits for a capture:
-        } else if(cap_p == B_ROOK && y1 == 7){
+        if(cap_p == B_ROOK && y1 == 7){
             if(x1 == 0){
                 clear_b_can_lcastle(gs.state);
             } else if(x1 == 7){
@@ -236,6 +237,11 @@ void apply_move(GameState& gs, move_vector m){
         // ensure king is not in check:
         assert(!is_checked(gs, w_king_x(gs.king_pos), w_king_y(gs.king_pos), oth_color));
         clear_w_check(gs.state);
+
+        // set check status for opposing black king:
+        if(is_checked(gs,b_king_x(gs.king_pos),b_king_y(gs.king_pos),WHITE)){
+            set_b_check(gs.state);
+        }
 
     } else {
 
@@ -258,9 +264,10 @@ void apply_move(GameState& gs, move_vector m){
             } else if(x0 == 7){
                 clear_b_can_rcastle(gs.state);
             }
-        
+        }
+
         // update opponent's castling bits for a capture:
-        } else if(cap_p == W_ROOK && y1 == 0){
+        if(cap_p == W_ROOK && y1 == 0){
             if(x1 == 0){
                 clear_w_can_lcastle(gs.state);
             } else if(x1 == 7){
@@ -271,6 +278,11 @@ void apply_move(GameState& gs, move_vector m){
         // ensure king is not in check:
         assert(!is_checked(gs, b_king_x(gs.king_pos), b_king_y(gs.king_pos), oth_color));
         clear_b_check(gs.state);
+
+        // set check status for opposing white king:
+        if(is_checked(gs,w_king_x(gs.king_pos),w_king_y(gs.king_pos),BLACK)){
+            set_w_check(gs.state);
+        }
     }
 }
 
@@ -420,6 +432,10 @@ void undo_move(GameState& gs, move_vector m){
             clear_w_check(gs.state);
         }
 
+        // clear black opponent check status:
+        // (undoing a move will never cause the opponent to leave check)
+        clear_b_check(gs.state);
+
     } else {
         
         // restore black en passant bits:
@@ -446,6 +462,10 @@ void undo_move(GameState& gs, move_vector m){
         } else {
             clear_b_check(gs.state);
         }
+
+        // clear white opponent check status:
+        // (undoing a move will never cause the opponent to leave check)
+        clear_w_check(gs.state);
     }
 
     // clear any final status bits:

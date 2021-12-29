@@ -2,6 +2,8 @@
 #define MCTS_H
 
 #include <unordered_map>
+#include <vector>
+#include <random>
 
 using namespace std;
 
@@ -11,7 +13,6 @@ struct MCTSNode {
     vector<double> prior;
     vector<unsigned int> action_counts;
     vector<unsigned int> action_q_values;
-    vector<MCTSNode*> children;
 
     MCTSNode(vector<double>& prior){
         int n_actions = prior.size();
@@ -23,7 +24,7 @@ struct MCTSNode {
 };
 
 // S = state of MC search
-// D = state 'delta' type
+// D = state 'delta' type (to apply/undo operations fast)
 template<typename S, typename D>
 class MCTS {
 protected:

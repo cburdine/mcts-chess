@@ -22,6 +22,8 @@ const int PREV_OTH_RCASTLE = (1<<29);
 const int PREV_OTH_LCASTLE = (1<<30);
 const int PREV_CHECK = (1<<31);
 
+//TODO: implement a prev_oth_check bit for faster state undos.
+
 inline int src_x(move_vector m){ return m & 7; }
 inline int src_y(move_vector m){ return (m>>3) & 7; }
 inline int dest_x(move_vector m){ return (m>>6) & 7; }
