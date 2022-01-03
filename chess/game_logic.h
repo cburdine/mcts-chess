@@ -67,6 +67,7 @@ inline void clear_prev_oth_lcastle(move_vector& m){ m &= ~(PREV_OTH_LCASTLE); }
 string pos_str(int x, int y);
 string to_movestring(GameState gs, move_vector m, bool shorthand=false);
 string to_move_vector_string(move_vector& m);
+bool parse_text_move(move_vector& m, GameState& gs, color player_to_move, string str);
 
 void apply_move(GameState& gs, move_vector m);
 void undo_move(GameState& gs, move_vector m);

@@ -1,7 +1,8 @@
 #include <sstream>
 #include <cassert>
 #include <array>
-
+#include <string>
+#include "../util/string_ops.h"
 #include "game_logic.h"
 
 using namespace std;
@@ -78,6 +79,66 @@ string to_movestring(GameState gs, move_vector m, bool shorthand){
     }
 
     return ss.str();
+}
+
+bool parse_text_move(move_vector& m, GameState& gs, color player_to_move, string str){
+
+    const string PIECES = "PRNBQK";
+
+    auto valid_moves = get_valid_moves(gs, player_to_move);
+
+    string ss = util::strip(str);
+    if(ss.size() == 0){ return false; }
+
+    if(ss == "rcastle" || ss == "OO" || ss == "O-O" || ss == "00" || ss == "0-0"){
+        // handle right castling:
+        for(move_vector v : valid_moves){
+            if(is_rcastle(v)){
+                m = v;
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    if(ss == "lcastle" || ss == "OOO" || ss == "O-O-O" 
+                || ss == "000" || ss == "0-0-0"){
+        // handle left castling:
+        for(move_vector v : valid_moves){
+            if(is_lcastle(v)){
+                m = v;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    
+    // ensure string is of the form "xx xx"
+    // using rank-file notation
+    if(ss.size() != 5){ return false; }
+
+    int v_src_x, v_src_y, v_dest_x, v_dest_y;
+    v_src_x = (ss[0]-'a');
+    v_src_y = (ss[1]-'1');
+    v_dest_x = (ss[3]-'a');
+    v_dest_y = (ss[4]-'1');
+
+    if( !(0 <= v_src_x && v_src_x < 8)
+     || !(0 <= v_src_y && v_src_y < 8)
+     || !(0 <= v_dest_x && v_dest_x < 8)
+     || !(0 <= v_dest_y && v_dest_y < 8) ){
+         return false;
+    }
+
+    for(move_vector v : valid_moves){
+        if(v_src_x == src_x(v) && v_src_y == src_y(v) 
+        && v_dest_x == dest_x(v) && v_dest_y == dest_y(v)){
+            m = v;
+            return true;
+        }
+    }
+    return false;
 }
 
 void apply_move(GameState& gs, move_vector m){
@@ -199,7 +260,6 @@ void apply_move(GameState& gs, move_vector m){
         gs.set_piece(x0, y0, NONE);
         gs.set_piece(x1, y1, src_p);
     }
-
 
     // clear enpassant bits and update king check status:
     if(src_color == WHITE){
@@ -638,6 +698,8 @@ vector<move_vector> get_valid_moves(GameState& gs, color player){
         if(w_can_lcastle(gs.state)){ set_prev_oth_lcastle(m); }
         if(b_en_passant(gs.state)){ set_prev_en_passant_x(m, b_en_passant_x(gs.state)); }
     }
+
+    //TODO: Keep track of insufficient mating material:
 
     // iterate over board:
     int i, x, y;

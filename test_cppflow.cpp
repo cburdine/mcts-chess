@@ -52,9 +52,9 @@ int main() {
                         "StatefulPartitionedCall_1:1",
                         "StatefulPartitionedCall_1:2"});
 
-        auto v_loss_vec = loss[0].get_data<float>();
-        auto pi_loss_vec = loss[1].get_data<float>();
-        auto total_loss_vec = loss[2].get_data<float>();
+        auto v_loss_vec = cppflow::cast(loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
+        auto pi_loss_vec = cppflow::cast(loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
+        auto total_loss_vec = cppflow::cast(loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
         cout << setw(5) << i
              << setw(16) << v_loss_vec[0] 
              << setw(16) << pi_loss_vec[0] 

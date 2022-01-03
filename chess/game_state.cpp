@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "game_logic.h"
 #include <array>
 #include <sstream>
 #include <iostream>
