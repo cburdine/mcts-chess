@@ -17,7 +17,7 @@ int main(){
     srand(time(0));
 
     ChessNetSelfPlay self_play_instance = ChessNetSelfPlay("./jupyter/simple_chess_net");
-    self_play_instance.do_self_play_episode(1,cout,true);
+    self_play_instance.do_self_play_episode(4,cout);
 
     /*
     // have the nnet play against itself:

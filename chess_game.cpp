@@ -305,6 +305,6 @@ double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games, ostream& log
     b->clear_agent_cache(log, verbose);
 
     log << "# of training examples: " << training_data.size() << endl;
-
+    
     return static_cast<double>(new_wins) / static_cast<double>(n_games);
 }

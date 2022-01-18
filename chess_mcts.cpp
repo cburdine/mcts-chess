@@ -52,7 +52,6 @@ double ChessUniformMCTS::get_state_action_estimates(vector<move_vector>& actions
 }
     
 void ChessUniformMCTS::apply_state_action(move_vector d){
-
     apply_move(state, d);
 
     if(captured_piece(d) || is_pawn(state.board[(src_y(d)<<3) | src_x(d)])){
