@@ -13,6 +13,8 @@ int main() {
 
     // Load cppflow model and print operations:
     cppflow::model model("jupyter/simple_chess_net");
+    cppflow::model model2("jupyter/simple_chess_net");
+
 
     // print model operations:
     cout << "-----------------------------------------------------" << endl;

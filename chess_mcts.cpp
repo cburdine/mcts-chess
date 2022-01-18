@@ -93,7 +93,7 @@ double ChessUniformMCTS::get_final_state_value(){
 }
 
 size_t ChessUniformMCTS::hash_state(){
-    /*
+    
     size_t h = 0;
     h ^= std::hash<int>{}(state.state | DRAW | W_CHECKMATE | B_CHECKMATE)
           + 0x9e3779b9 + (h << 6) + (h >> 2);
@@ -104,8 +104,9 @@ size_t ChessUniformMCTS::hash_state(){
         h ^= std::hash<int>{}(p)  + 0x9e3779b9 + (h << 6) + (h >> 2); 
     }
     h ^= std::hash<int>{}(31*player_to_move)  + 0x9e3779b9 + (h << 6) + (h >> 2);
-    */
-   
+    h ^= std::hash<int>{}(31*moves_since_last_capture)  + 0x9e3779b9 + (h << 6) + (h >> 2);
+    
+    /*
     size_t h = (state.state | DRAW | W_CHECKMATE | B_CHECKMATE);
     h = (h<<1) | player_to_move;
     h = h*31 + moves_since_last_capture;
@@ -113,6 +114,7 @@ size_t ChessUniformMCTS::hash_state(){
     for(auto p : state.board){
         h = h*31 + p;
     }
+    */
     
     return h;
 }
@@ -141,6 +143,11 @@ void ChessUniformMCTS::reset_to_state(GameState gs, color player_to_move){
 
 ChessNetMCTS::ChessNetMCTS(GameState gs, string model_path, color player_to_move, double noise) : 
     ChessUniformMCTS(gs,player_to_move,noise), nnet(model_path){
+    // constructor
+}
+
+ChessNetMCTS::ChessNetMCTS(GameState gs, cppflow::model model, color player_to_move, double noise) : 
+    ChessUniformMCTS(gs,player_to_move,noise), nnet(model){
     // constructor
 }
 

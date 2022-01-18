@@ -39,11 +39,14 @@ public:
     double action_objective_function(MCTSNode& node, int action_idx);
 
     void reset_to_state(GameState gs, color player_to_move=WHITE);
+
+    unsigned int get_moves_since_last_capture(){ return moves_since_last_capture; }
+    color get_player_to_move(){ return player_to_move; }
 };
 
 class ChessNetMCTS : public ChessUniformMCTS {
 protected:
-
+    
     cppflow::model nnet;
 
     const string serve_x_input = "chessnet_serve_x:0";
@@ -61,6 +64,8 @@ protected:
 public:
 
     ChessNetMCTS(GameState gs, string model_path, color player_to_move = WHITE, double noise = 1.0);
+    ChessNetMCTS(GameState gs, cppflow::model model, color player_to_move = WHITE, double noise = 1.0);
+
 
     double get_state_action_estimates(vector<move_vector>& actions, vector<double>& prob_estimates);
 

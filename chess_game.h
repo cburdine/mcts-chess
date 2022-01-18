@@ -6,6 +6,7 @@
 #include "chess/game_state.h"
 #include <chrono>
 #include <random>
+#include <tuple>
 
 class ChessAgent {
 protected:
@@ -42,6 +43,8 @@ public:
 
 };
 
+typedef vector<tuple<array<piece,64>,array<double,64*64>,double>> chessnet_dataset;
+
 class ChessNetAgent : public ChessAgent {
 private:
     ChessNetMCTS nnet_mcts;
@@ -51,10 +54,12 @@ private:
 
     vector<array<piece,64>> game_boards;
     vector<array<double,64*64>> game_probs;
+    vector<move_vector> game_moves;
     double game_value;
 
 public:
     ChessNetAgent(color agent_color, string model_path, unsigned int sims_per_move=256);
+    ChessNetAgent(color agent_color, cppflow::model& model, unsigned int sims_per_move=256);
 
     bool prompt_next_move(move_vector& move, ostream& log, bool verbose = false);
 
@@ -64,6 +69,12 @@ public:
 
     void reset_agent(ostream& log, bool verbose = false);
 
+    void clear_agent_cache(ostream& log, bool verbose);
+
+    void get_training_data(chessnet_dataset& dataset);
+
+    double get_game_value(){ return game_value; }
+
 };
 
 class ChessGame {
@@ -72,6 +83,8 @@ protected:
     bool verbose;
     ostream& log;
     shared_ptr<ChessAgent> w, b;
+
+    // TODO: implement a move prompt timing system:
     chrono::duration<double> w_time_elapsed, b_time_elapsed;
 
 public:
@@ -79,6 +92,31 @@ public:
     ChessGame(shared_ptr<ChessAgent> w, shared_ptr<ChessAgent> b, ostream& log = cout, bool verbose = true);
 
     void play();
+};
+
+class ChessNetSelfPlay {
+protected:
+
+    string model_path;
+    unsigned int batch_size;
+    unsigned int sims_per_move;
+    double validation_holdout;
+
+    vector<array<piece,64>> board_data;
+    vector<array<double,64*64>> prob_data;
+    vector<double> value_data;
+
+    cppflow::model old_model;
+    cppflow::model new_model;
+
+public:
+
+    ChessNetSelfPlay(string model_path, 
+                        unsigned int batch_size = 4, 
+                        unsigned int sims_per_move = 256, 
+                        double validation_holdout = 0.1);
+
+    double do_self_play_episode(unsigned int n_games, ostream& log, bool verbose = false);
 };
 
 

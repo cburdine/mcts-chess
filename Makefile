@@ -7,7 +7,7 @@ debug:
 	-ltensorflow
 
 release:
-	g++ -fcompare-debug-second -O3 -o ./bin/main \
+	g++ -fcompare-debug-second -O3 -DNDEBUG -o ./bin/main \
 	./chess/*.cpp \
 	chess_mcts.cpp \
 	chess_game.cpp \
