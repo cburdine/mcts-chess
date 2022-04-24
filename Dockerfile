@@ -19,6 +19,5 @@ WORKDIR /mcts-chess
 RUN make test_cppflow
 RUN ./bin/test_cppflow
 
-# build main and main_debug binaries:
-RUN make debug    # <-- builds debug version
-RUN make release  # <-- builds release version
+# build main binary:
+RUN make release  

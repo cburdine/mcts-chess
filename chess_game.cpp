@@ -270,9 +270,9 @@ ChessNetSelfPlay::ChessNetSelfPlay(string model_path,
     this->old_model = cppflow::model(model_path);
 }
 
-double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games, ostream& log, bool verbose){
+double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games, 
+            chessnet_dataset& training_data, ostream& log, bool verbose){
 
-    chessnet_dataset training_data;
     unsigned int new_wins = 0;
     bool new_playing_as_white = false;
 
@@ -315,22 +315,14 @@ double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games, ostream& log
     return static_cast<double>(new_wins) / static_cast<double>(n_games);
 }
 
-void ChessNetSelfPlay::clear_data(){
-
-    // clear all cached training examples:
-    board_data.clear();
-    prob_data.clear();
-    value_data.clear();
-}
-
-
-double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int seed, ostream& log, bool verbose){
+double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, 
+            chessnet_dataset& training_data, unsigned int seed, ostream& log, bool verbose){
     
     double final_loss = 0.0;
     
     // shuffle data:
-    auto data_idxs = vector<unsigned int>(board_data.size());
-    for(unsigned int i = 0; i < board_data.size(); ++i){
+    auto data_idxs = vector<unsigned int>(training_data.size());
+    for(unsigned int i = 0; i < training_data.size(); ++i){
         data_idxs[i] = i;
     }
     shuffle(data_idxs.begin(), data_idxs.end(), default_random_engine(seed));
@@ -348,7 +340,7 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int s
     );
 
     // pack data into train/validation tensors:
-    for(unsigned int i = 0; i < (data_idxs.size()-batch_size); i += batch_size){
+    for(unsigned int i = 0; i + batch_size < data_idxs.size(); i += batch_size){
 
         // pack tensors in batches:
         auto batch_x = vector<float>(batch_size*8*8*6, 0.0f); 
@@ -356,25 +348,29 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int s
         auto batch_y_v = vector<float>(batch_size);
 
         for(unsigned int j = 0; j < batch_size; ++j){
+            assert(i+j < data_idxs.size());
             unsigned int data_idx = data_idxs[i+j];
+
+            // retrieve data element tuple: (board, pi_probs, value)
+            auto [elem_board, elem_probs, elem_value] = training_data[data_idx];
             
             // pack x tensor: [batch size,8,8,6]
             for(unsigned int k = 0; k < 64; ++k){
-                piece p = board_data[data_idx][k];
+                piece p = elem_board[k];
                 if(p){
                     int p_idx = (p>>1)-1;
                     assert(0 <= p_idx && p_idx < 6);
-                    batch_x[(j*8*8*6) + 6*i+p_idx] = ((is_white(p))? 1.0f : -1.0f);
+                    batch_x[(j*8*8*6) + k*6+p_idx] = ((is_white(p))? 1.0f : -1.0f);
                 }
             }
 
             // pack y_pi tensor: [batch size, 64*64]
             for(unsigned int k = 0; k < 64*64; ++k){
-                batch_y_pi[(j*64*64) + k] = prob_data[data_idx][k];
+                batch_y_pi[(j*64*64) + k] = elem_probs[k];
             }
 
             // pack y_v tensor: [batch size]
-            batch_y_v[j]= value_data[data_idx];
+            batch_y_v[j]= elem_value;
         }
 
         // cast cpp vectors to tensors:
@@ -402,8 +398,9 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int s
 
         if(verbose){
             log << "------------------------------------------------------------" << endl;
-            log << "Epoch " << n << ":" << endl;
-            log << setw(5) << "step"
+            log << "Epoch " << setw(5) << (n+1) << " of " 
+                << setw(5) << n_epochs << ":" << endl;
+            log << setw(12) << "step"
             << setw(16) << "v loss"
             << setw(16) << "pi loss"
             << setw(16) << "net reg. loss"
@@ -423,16 +420,14 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int s
             auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
             auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
 
-            for(unsigned int j = 0; j < batch_size; ++j){
-                mean_v_loss += v_loss_vec[j];
-                mean_pi_loss += pi_loss_vec[j];
-                mean_total_loss += total_loss_vec[j];
-            }
+            mean_v_loss += v_loss_vec[0];
+            mean_pi_loss += pi_loss_vec[0];
+            mean_total_loss += total_loss_vec[0];
         }
-        mean_v_loss /= (batch_size*n_train_batches);
-        mean_pi_loss /= (batch_size*n_train_batches);
-        mean_total_loss /= (batch_size*n_train_batches);
-
+        mean_v_loss /= n_train_batches;
+        mean_pi_loss /= n_train_batches;
+        mean_total_loss /= n_train_batches;
+        
         // print training loss:
         if(verbose){
             log << setw(12) << "TRAIN"
@@ -456,16 +451,14 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int s
             auto v_loss_vec = cppflow::cast(batch_loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
             auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
             auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
-
-            for(unsigned int j = 0; j < batch_size; ++j){
-                mean_v_loss += v_loss_vec[j];
-                mean_pi_loss += pi_loss_vec[j];
-                mean_total_loss += total_loss_vec[j];
-            }
+            
+            mean_v_loss += v_loss_vec[0];
+            mean_pi_loss += pi_loss_vec[0];
+            mean_total_loss += total_loss_vec[0];
         }
-        mean_v_loss /= (batch_size*n_train_batches);
-        mean_pi_loss /= (batch_size*n_train_batches);
-        mean_total_loss /= (batch_size*n_train_batches);
+        mean_v_loss /= n_train_batches;
+        mean_pi_loss /= n_train_batches;
+        mean_total_loss /= n_train_batches;
         final_loss = mean_total_loss;
 
         // print validation loss:

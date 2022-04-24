@@ -16,9 +16,10 @@ int main(){
     
     srand(time(0));
 
+    chessnet_dataset dataset;
     ChessNetSelfPlay self_play_instance = ChessNetSelfPlay("./jupyter/simple_chess_net");
-    self_play_instance.do_self_play_episode(1, cout, true);
-    self_play_instance.do_training_steps(1, 12345, cout, true);
+    self_play_instance.do_self_play_episode(1, dataset, cout, true);
+    self_play_instance.do_training_steps(100, dataset, 12345, cout, true);
 
 
     /*

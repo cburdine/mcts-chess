@@ -102,10 +102,6 @@ protected:
     unsigned int sims_per_move;
     double validation_holdout;
 
-    vector<array<piece,64>> board_data;
-    vector<array<double,64*64>> prob_data;
-    vector<double> value_data;
-
     cppflow::model old_model;
     cppflow::model new_model;
 
@@ -116,11 +112,11 @@ public:
                         unsigned int sims_per_move = 256, 
                         double validation_holdout = 0.1);
 
-    double do_self_play_episode(unsigned int n_games, ostream& log, bool verbose = false);
+    double do_self_play_episode(unsigned int n_games, 
+                chessnet_dataset& training_data, ostream& log, bool verbose = false);
 
-    void clear_data();
-
-    double do_training_steps(unsigned int n_epochs, unsigned int seed, ostream& log, bool verbose = false);
+    double do_training_steps(unsigned int n_epochs, 
+                chessnet_dataset& training_data, unsigned int seed, ostream& log, bool verbose = false);
 };
 
 
