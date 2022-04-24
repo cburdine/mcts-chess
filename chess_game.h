@@ -117,6 +117,10 @@ public:
                         double validation_holdout = 0.1);
 
     double do_self_play_episode(unsigned int n_games, ostream& log, bool verbose = false);
+
+    void clear_data();
+
+    double do_training_steps(unsigned int n_epochs, unsigned int seed, ostream& log, bool verbose = false);
 };
 
 

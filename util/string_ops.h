@@ -21,7 +21,7 @@ namespace util {
 			j--;		
 		return str.substr(i, j+1 -i );
 	}
-
+	
 	std::vector<std::string> split(const std::string &str, std::string ch = " "){
 		// unused
 		return std::vector<std::string>();

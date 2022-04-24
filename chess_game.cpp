@@ -1,9 +1,13 @@
 #include "chess_game.h"
+#include "chessnet_config.h"
 
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <memory>
+#include <iomanip>
+#include <random>
+#include <algorithm>
 
 ChessPlayerAgent::ChessPlayerAgent(color agent_color, istream& player_input) : ChessAgent(agent_color), 
     input(player_input),
@@ -304,7 +308,176 @@ double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games, ostream& log
     w->clear_agent_cache(log, verbose);
     b->clear_agent_cache(log, verbose);
 
-    log << "# of training examples: " << training_data.size() << endl;
+    if(verbose){
+        log << "# of training examples: " << training_data.size() << endl;
+    }
     
     return static_cast<double>(new_wins) / static_cast<double>(n_games);
 }
+
+void ChessNetSelfPlay::clear_data(){
+
+    // clear all cached training examples:
+    board_data.clear();
+    prob_data.clear();
+    value_data.clear();
+}
+
+
+double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, unsigned int seed, ostream& log, bool verbose){
+    
+    double final_loss = 0.0;
+    
+    // shuffle data:
+    auto data_idxs = vector<unsigned int>(board_data.size());
+    for(unsigned int i = 0; i < board_data.size(); ++i){
+        data_idxs[i] = i;
+    }
+    shuffle(data_idxs.begin(), data_idxs.end(), default_random_engine(seed));
+    
+    // initialize train/validation tensors:
+    vector<cppflow::tensor> x_train_batches, 
+                            y_pi_train_batches,
+                            y_v_train_batches,
+                            x_test_batches,
+                            y_pi_test_batches,
+                            y_v_test_batches;
+
+    unsigned int split_idx = static_cast<unsigned int>(
+        data_idxs.size()*validation_holdout
+    );
+
+    // pack data into train/validation tensors:
+    for(unsigned int i = 0; i < (data_idxs.size()-batch_size); i += batch_size){
+
+        // pack tensors in batches:
+        auto batch_x = vector<float>(batch_size*8*8*6, 0.0f); 
+        auto batch_y_pi = vector<float>(batch_size*64*64);
+        auto batch_y_v = vector<float>(batch_size);
+
+        for(unsigned int j = 0; j < batch_size; ++j){
+            unsigned int data_idx = data_idxs[i+j];
+            
+            // pack x tensor: [batch size,8,8,6]
+            for(unsigned int k = 0; k < 64; ++k){
+                piece p = board_data[data_idx][k];
+                if(p){
+                    int p_idx = (p>>1)-1;
+                    assert(0 <= p_idx && p_idx < 6);
+                    batch_x[(j*8*8*6) + 6*i+p_idx] = ((is_white(p))? 1.0f : -1.0f);
+                }
+            }
+
+            // pack y_pi tensor: [batch size, 64*64]
+            for(unsigned int k = 0; k < 64*64; ++k){
+                batch_y_pi[(j*64*64) + k] = prob_data[data_idx][k];
+            }
+
+            // pack y_v tensor: [batch size]
+            batch_y_v[j]= value_data[data_idx];
+        }
+
+        // cast cpp vectors to tensors:
+        auto batch_x_tensor = cppflow::tensor(batch_x, {batch_size, 8,8,6});
+        auto batch_y_pi_tensor = cppflow::tensor(batch_y_pi, {batch_size, 64*64});
+        auto batch_y_v_tensor = cppflow::tensor(batch_y_v, {batch_size});
+
+        // add tensors to dataset (train or test):        
+        if(i < split_idx){
+            x_test_batches.push_back(batch_x_tensor);
+            y_pi_test_batches.push_back(batch_y_pi_tensor);
+            y_v_test_batches.push_back(batch_y_v_tensor);
+        } else {
+            x_train_batches.push_back(batch_x_tensor);
+            y_pi_train_batches.push_back(batch_y_pi_tensor);
+            y_v_train_batches.push_back(batch_y_v_tensor);
+        }
+    }
+    
+    
+    // perform training loop:
+    unsigned int n_train_batches = x_train_batches.size();
+    unsigned int n_test_batches = x_test_batches.size();
+    for(unsigned int n = 0; n < n_epochs; ++n){
+
+        if(verbose){
+            log << "------------------------------------------------------------" << endl;
+            log << "Epoch " << n << ":" << endl;
+            log << setw(5) << "step"
+            << setw(16) << "v loss"
+            << setw(16) << "pi loss"
+            << setw(16) << "net reg. loss"
+            << endl;
+        }
+
+        // perform epoch on training data:
+        double mean_v_loss = 0.0, mean_pi_loss = 0.0, mean_total_loss = 0.0;
+        for(unsigned int i = 0; i < n_train_batches; ++i){
+            auto batch_loss = new_model({{TRAIN_X_INPUT, x_train_batches[i]},
+                                    {TRAIN_Y_PI_INPUT, y_pi_train_batches[i]},
+                                    {TRAIN_Y_V_INPUT, y_v_train_batches[i]}},
+                                    {TRAIN_V_LOSS_OUTPUT,
+                                     TRAIN_PI_LOSS_OUTPUT,
+                                     TRAIN_TOTAL_LOSS_OUTPUT});
+            auto v_loss_vec = cppflow::cast(batch_loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
+            auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
+            auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
+
+            for(unsigned int j = 0; j < batch_size; ++j){
+                mean_v_loss += v_loss_vec[j];
+                mean_pi_loss += pi_loss_vec[j];
+                mean_total_loss += total_loss_vec[j];
+            }
+        }
+        mean_v_loss /= (batch_size*n_train_batches);
+        mean_pi_loss /= (batch_size*n_train_batches);
+        mean_total_loss /= (batch_size*n_train_batches);
+
+        // print training loss:
+        if(verbose){
+            log << setw(12) << "TRAIN"
+             << setw(16) << mean_v_loss
+             << setw(16) << mean_pi_loss 
+             << setw(16) << mean_total_loss
+             << endl;
+        }
+
+        // perform validation epoch:
+        mean_v_loss = 0.0; 
+        mean_pi_loss = 0.0; 
+        mean_total_loss = 0.0;
+        for(unsigned int i = 0; i < n_test_batches; ++i){
+            auto batch_loss = new_model({{VALIDATE_X_INPUT, x_test_batches[i]},
+                                    {VALIDATE_Y_PI_INPUT, y_pi_test_batches[i]},
+                                    {VALIDATE_Y_V_INPUT, y_v_test_batches[i]}},
+                                    {VALIDATE_V_LOSS_OUTPUT,
+                                     VALIDATE_PI_LOSS_OUTPUT,
+                                     VALIDATE_TOTAL_LOSS_OUTPUT});
+            auto v_loss_vec = cppflow::cast(batch_loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
+            auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
+            auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
+
+            for(unsigned int j = 0; j < batch_size; ++j){
+                mean_v_loss += v_loss_vec[j];
+                mean_pi_loss += pi_loss_vec[j];
+                mean_total_loss += total_loss_vec[j];
+            }
+        }
+        mean_v_loss /= (batch_size*n_train_batches);
+        mean_pi_loss /= (batch_size*n_train_batches);
+        mean_total_loss /= (batch_size*n_train_batches);
+        final_loss = mean_total_loss;
+
+        // print validation loss:
+        if(verbose){
+            log << setw(12) << "VALIDATION"
+                << setw(16) << mean_v_loss
+                << setw(16) << mean_pi_loss 
+                << setw(16) << mean_total_loss
+                << endl;
+        }
+    }
+
+    return final_loss;
+}
+

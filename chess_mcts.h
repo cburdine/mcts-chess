@@ -6,6 +6,7 @@
 #include "chess/game_state.h"
 #include "cppflow/ops.h"
 #include "cppflow/model.h"
+#include "chessnet_config.h"
 
 #include <cassert>
 #include <vector>
@@ -49,17 +50,9 @@ protected:
     
     cppflow::model nnet;
 
-    const string serve_x_input = "chessnet_serve_x:0";
-    const string serve_pi_output = "StatefulPartitionedCall:0";
-    const string serve_v_output = "StatefulPartitionedCall:1";
-
-    const string train_x_input = "chessnet_train_x:0";
-    const string train_y_pi_input = "chessnet_train_pi:0";
-    const string train_y_v_input = "chessnet_train_v:0";
-
-    const string train_v_loss_output = "StatefulPartitionedCall_1:0";
-    const string train_pi_loss_output = "StatefulPartitionedCall_1:1";
-    const string total_loss_output = "StatefulPartitionedCall_1:2";
+    const string serve_x_input = SERVE_X_INPUT;
+    const string serve_pi_output = SERVE_PI_OUTPUT;
+    const string serve_v_output = SERVE_V_OUTPUT;
 
 public:
 

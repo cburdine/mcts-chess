@@ -27,8 +27,7 @@ void MCTS<S,D>::run(int n_simulations){
 
     // record root and clear search tree:
     S root_state = state;
-    size_t root_hash = hash_state();
-
+    
     // perform n simulations:
     for(int n = 0; n < n_simulations; ++n){
         
