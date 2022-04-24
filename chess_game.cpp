@@ -398,8 +398,8 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
 
         if(verbose){
             log << "------------------------------------------------------------" << endl;
-            log << "Epoch " << setw(5) << (n+1) << " of " 
-                << setw(5) << n_epochs << ":" << endl;
+            log << "Epoch " << (n+1) << " of " 
+                << n_epochs << ":" << endl;
             log << setw(12) << "step"
             << setw(16) << "v loss"
             << setw(16) << "pi loss"
