@@ -20,7 +20,11 @@ int main(){
     ChessNetSelfPlay self_play_instance = ChessNetSelfPlay("./jupyter/simple_chess_net");
     self_play_instance.do_self_play_episode(1, dataset, cout, true);
 
-    write_chessnet_dataset(dataset, "data.mcts");
+    save_chessnet_dataset(dataset, "chessnet_data.mcts");
+
+    dataset.clear();
+    load_chessnet_dataset(dataset, "chessnet_data.mcts");
+
 
     self_play_instance.do_training_steps(100, dataset, 12345, cout, true);
 

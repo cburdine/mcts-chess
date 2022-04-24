@@ -277,7 +277,7 @@ bool load_chessnet_dataset(chessnet_dataset& data, string path){
     return true;
 }
 
-bool write_chessnet_dataset(chessnet_dataset& data, string path){
+bool save_chessnet_dataset(chessnet_dataset& data, string path){
     
     ofstream file_out(path, ios::binary);
     if(!file_out){
