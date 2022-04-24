@@ -1,12 +1,19 @@
 #include "chess_game.h"
 #include "chessnet_config.h"
 
+#include <cereal/cereal.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/tuple.hpp>
+#include <cereal/archives/portable_binary.hpp>
+
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <memory>
 #include <iomanip>
 #include <random>
+#include <fstream>
 #include <algorithm>
 
 ChessPlayerAgent::ChessPlayerAgent(color agent_color, istream& player_input) : ChessAgent(agent_color), 
@@ -253,6 +260,36 @@ void ChessGame::play(){
 
     w->end_of_game_callback(log,verbose);
     b->end_of_game_callback(log,verbose);
+}
+
+bool load_chessnet_dataset(chessnet_dataset& data, string path){
+    
+    ifstream file_in(path, ios::binary);
+    if(!file_in){
+        cerr << "Error: unable to open \"" + path + "\"." << endl;
+        return false;
+    } else {
+        auto archive_in = cereal::PortableBinaryInputArchive(file_in);
+        archive_in(data);
+    }
+
+    file_in.close();
+    return true;
+}
+
+bool write_chessnet_dataset(chessnet_dataset& data, string path){
+    
+    ofstream file_out(path, ios::binary);
+    if(!file_out){
+        cerr << "Error: unable to open \"" + path + "\"." << endl;
+        return false;
+    } else {
+        auto archive_out = cereal::PortableBinaryOutputArchive(file_out);
+        archive_out(data);
+    }
+
+    file_out.close();
+    return true;
 }
 
 ChessNetSelfPlay::ChessNetSelfPlay(string model_path, 

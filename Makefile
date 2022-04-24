@@ -4,7 +4,8 @@ debug:
 	chess_mcts.cpp \
 	chess_game.cpp \
 	main.cpp \
-	-ltensorflow
+	-ltensorflow \
+	-I .
 
 release:
 	g++ -std=c++17 -fcompare-debug-second -O3 -DNDEBUG -o ./bin/main \
@@ -12,7 +13,8 @@ release:
 	chess_mcts.cpp \
 	chess_game.cpp \
 	main.cpp \
-	-ltensorflow
+	-ltensorflow \
+	-I .
 
 test_cppflow:
 	g++ -std=c++17 -o ./bin/test_cppflow ./test_cppflow.cpp -ltensorflow

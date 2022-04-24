@@ -1,5 +1,6 @@
 env/
 bin/*
+*.mcts
 .vscode
 *.game
 *.txt
