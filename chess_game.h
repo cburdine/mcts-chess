@@ -47,6 +47,7 @@ typedef vector<tuple<array<piece,64>,array<double,64*64>,double>> chessnet_datas
 
 bool load_chessnet_dataset(chessnet_dataset& data, string path);
 bool save_chessnet_dataset(chessnet_dataset& data, string path);
+void print_info(chessnet_dataset& data, ostream& out);
 
 class ChessNetAgent : public ChessAgent {
 private:

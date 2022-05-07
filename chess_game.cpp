@@ -292,6 +292,38 @@ bool save_chessnet_dataset(chessnet_dataset& data, string path){
     return true;
 }
 
+void print_info(chessnet_dataset& data, ostream& os){
+    os << "Dataset (" << data.size() << " items):" << endl;
+    for(auto item : data){
+        auto [ board, moves, value] = item;
+        cout << "value: " << value;
+        double min_prob, max_prob = moves[0];
+        for(auto m : moves){
+            if(m < min_prob){ min_prob = m; }
+            if(m > max_prob){ max_prob = m; }
+        }
+        cout << "Min prob: "  << min_prob << endl
+             << " Max Prob: " << max_prob << endl;
+        /*
+        for (int y = 7; y >= 0; --y){
+            os << (y+1);
+            for(int x = 0; x < 8; ++x){
+                piece p = board[(y<<3) | x];
+                if(p != NONE){ 
+                    os << ' ' << to_display_char(p); 
+                } else {
+                    os << ' ' << (((x+y)&1)? '.' : '#');
+                }
+            }
+            os << endl;
+        }
+        os << ' ';
+        for(int x = 0; x < 8; ++x){ os << ' ' << (char) ('a'+x); }
+        */
+        os << endl << "-----------------------------------" << endl;
+    }
+}
+
 ChessNetSelfPlay::ChessNetSelfPlay(string model_path, 
                         unsigned int batch_size, 
                         unsigned int sims_per_move, 

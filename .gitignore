@@ -1,5 +1,9 @@
 env/
+data/
 bin/*
+!bin/.gitkeep
+test/*
+!test/.gitkeep
 *.mcts
 .vscode
 *.game

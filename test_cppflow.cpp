@@ -25,7 +25,7 @@ int main() {
     cout << "-----------------------------------------------------" << endl;
     cout << "Testing Inference Serving..." << endl;
     auto x_input = cppflow::fill({BATCH_SIZE, 8, 8, 6}, 1.0f);
-    auto output = model({{"chessnet_serve_x:0", x_input}},{"StatefulPartitionedCall:0", "StatefulPartitionedCall:1"});
+    auto output = model({{"chessnet_serve_x:0", x_input}},{"StatefulPartitionedCall_1:0", "StatefulPartitionedCall_1:1"});
 
     // output policy network result:
     cout << output[0] << endl;
@@ -50,9 +50,9 @@ int main() {
         auto loss = model({{"chessnet_train_x:0", x_input},
                        {"chessnet_train_pi:0", y_pi},
                        {"chessnet_train_v:0", y_v}},
-                       {"StatefulPartitionedCall_1:0", 
-                        "StatefulPartitionedCall_1:1",
-                        "StatefulPartitionedCall_1:2"});
+                       {"StatefulPartitionedCall_2:0", 
+                        "StatefulPartitionedCall_2:1",
+                        "StatefulPartitionedCall_2:2"});
 
         auto v_loss_vec = cppflow::cast(loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
         auto pi_loss_vec = cppflow::cast(loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
@@ -77,9 +77,9 @@ int main() {
         auto loss = model({{"chessnet_validate_x:0", x_input},
                        {"chessnet_validate_pi:0", y_pi},
                        {"chessnet_validate_v:0", y_v}},
-                       {"StatefulPartitionedCall_2:0", 
-                        "StatefulPartitionedCall_2:1",
-                        "StatefulPartitionedCall_2:2"});
+                       {"StatefulPartitionedCall_3:0", 
+                        "StatefulPartitionedCall_3:1",
+                        "StatefulPartitionedCall_3:2"});
 
         auto v_loss_vec = cppflow::cast(loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
         auto pi_loss_vec = cppflow::cast(loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
@@ -91,5 +91,17 @@ int main() {
              << endl;
     }
 
+    cout << "-----------------------------------------------------" << endl;
+    cout << "Testing checkpoint saving...." << endl;\
+    auto f_input = cppflow::tensor(std::string("test/checkpoint"));
+    cout << f_input << endl;
+    model({{"chessnet_save_path:0", f_input}},{"StatefulPartitionedCall:0"});
+
+    cout << "-----------------------------------------------------" << endl;
+    cout << "Testing model saving...." << endl;\
+    auto f_in = cppflow::tensor(std::string("test/variables"));
+    cout << f_in << endl;
+    model({{"saver_filename:0", f_in}},{"StatefulPartitionedCall_4:0"});
+    
     return 0;
 }
