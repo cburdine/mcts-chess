@@ -3,6 +3,7 @@
 
 #include "cppflow/ops.h"
 #include "cppflow/model.h"
+#include "chessnet_config.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ int main() {
     cout << "-----------------------------------------------------" << endl;
     cout << "Testing Inference Serving..." << endl;
     auto x_input = cppflow::fill({BATCH_SIZE, 8, 8, 6}, 1.0f);
-    auto output = model({{"chessnet_serve_x:0", x_input}},{"StatefulPartitionedCall_1:0", "StatefulPartitionedCall_1:1"});
+    auto output = model({{SERVE_X_INPUT, x_input}},{SERVE_PI_OUTPUT, SERVE_V_OUTPUT});
 
     // output policy network result:
     cout << output[0] << endl;
@@ -47,12 +48,12 @@ int main() {
          << endl;
 
     for(int i = 0; i < 100; ++i){
-        auto loss = model({{"chessnet_train_x:0", x_input},
-                       {"chessnet_train_pi:0", y_pi},
-                       {"chessnet_train_v:0", y_v}},
-                       {"StatefulPartitionedCall_2:0", 
-                        "StatefulPartitionedCall_2:1",
-                        "StatefulPartitionedCall_2:2"});
+        auto loss = model({{TRAIN_X_INPUT, x_input},
+                       {TRAIN_Y_PI_INPUT, y_pi},
+                       {TRAIN_Y_V_INPUT, y_v}},
+                       {TRAIN_V_LOSS_OUTPUT, 
+                        TRAIN_PI_LOSS_OUTPUT,
+                        TRAIN_TOTAL_LOSS_OUTPUT});
 
         auto v_loss_vec = cppflow::cast(loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
         auto pi_loss_vec = cppflow::cast(loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
@@ -74,12 +75,12 @@ int main() {
          << endl;
 
     for(int i = 0; i < 5; ++i){
-        auto loss = model({{"chessnet_validate_x:0", x_input},
-                       {"chessnet_validate_pi:0", y_pi},
-                       {"chessnet_validate_v:0", y_v}},
-                       {"StatefulPartitionedCall_3:0", 
-                        "StatefulPartitionedCall_3:1",
-                        "StatefulPartitionedCall_3:2"});
+        auto loss = model({{VALIDATE_X_INPUT, x_input},
+                       {VALIDATE_Y_PI_INPUT, y_pi},
+                       {VALIDATE_Y_V_INPUT, y_v}},
+                       {VALIDATE_V_LOSS_OUTPUT, 
+                        VALIDATE_PI_LOSS_OUTPUT,
+                        VALIDATE_TOTAL_LOSS_OUTPUT});
 
         auto v_loss_vec = cppflow::cast(loss[0],TF_FLOAT,TF_DOUBLE).get_data<double>();
         auto pi_loss_vec = cppflow::cast(loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();

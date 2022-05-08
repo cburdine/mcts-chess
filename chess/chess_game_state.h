@@ -1,5 +1,5 @@
-#ifndef GAME_STATE_H
-#define GAME_STATE_H
+#ifndef CHESS_GAME_STATE_H
+#define CHESS_GAME_STATE_H
 
 #include <iostream>
 #include <array>
@@ -163,4 +163,4 @@ struct GameStateHasher {
 string to_statestring(data_vector s);
 
 
-#endif // GAME_STATE_H
+#endif // CHESS_GAME_STATE_H

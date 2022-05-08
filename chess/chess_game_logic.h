@@ -1,11 +1,11 @@
-#ifndef GAME_LOGIC_H
-#define GAME_LOGIC_H
+#ifndef CHESS_GAME_LOGIC_H
+#define CHESS_GAME_LOGIC_H
 
 #include <vector>
 #include <sstream>
 #include <cassert>
 
-#include "game_state.h"
+#include "chess_game_state.h"
 
 using namespace std;
 
@@ -84,4 +84,4 @@ inline void add_valid_king_moves(GameState& gs, color player, move_vector base_m
 
 bool move_will_check_king(GameState& gs, move_vector m, color king_color);
 
-# endif // GAME_LOGIC_H
+# endif // CHESS_GAME_LOGIC_H

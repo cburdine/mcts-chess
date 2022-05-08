@@ -2,8 +2,9 @@
 #include <cassert>
 #include <array>
 #include <string>
-#include "../util/string_ops.h"
-#include "game_logic.h"
+
+#include "util/string_ops.h"
+#include "chess_game_logic.h"
 
 using namespace std;
 

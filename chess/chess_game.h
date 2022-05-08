@@ -1,12 +1,13 @@
 #ifndef CHESS_GAME_H
 #define CHESS_GAME_H
 
-#include "chess_mcts.h"
-#include "chess/game_logic.h"
-#include "chess/game_state.h"
 #include <chrono>
 #include <random>
 #include <tuple>
+
+#include "chess_mcts.h"
+#include "chess_game_logic.h"
+#include "chess_game_state.h"
 
 class ChessAgent {
 protected:

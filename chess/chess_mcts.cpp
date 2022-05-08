@@ -1,10 +1,10 @@
+#include <iostream>
+
 #include "chess_mcts.h"
-#include "chess/game_logic.h"
-#include "chess/game_state.h"
+#include "chess_game_logic.h"
+#include "chess_game_state.h"
 #include "cppflow/ops.h"
 #include "cppflow/model.h"
-
-#include <iostream>
 
 ChessUniformMCTS::ChessUniformMCTS(
     GameState gs, color player_to_move, double noise) : MCTS(gs) {

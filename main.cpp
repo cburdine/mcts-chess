@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-
-#include "chess/game_state.h"
-#include "chess/game_logic.h"
-#include "chess_mcts.h"
-#include "chess_game.h"
 #include <stdlib.h>
 #include <time.h>
 #include <memory>
+
+#include "chess/chess_game_state.h"
+#include "chess/chess_game_logic.h"
+#include "chess/chess_mcts.h"
+#include "chess/chess_game.h"
 
 using namespace std;
 

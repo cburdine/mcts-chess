@@ -1,17 +1,16 @@
 #ifndef CHESS_MCTS_H
 #define CHESS_MCTS_H
 
-#include "mcts/mcts.h"
-#include "chess/game_logic.h"
-#include "chess/game_state.h"
-#include "cppflow/ops.h"
-#include "cppflow/model.h"
-#include "chessnet_config.h"
-
 #include <cassert>
 #include <vector>
 #include <string>
 
+#include "mcts/mcts.h"
+#include "chess_game_logic.h"
+#include "chess_game_state.h"
+#include "cppflow/ops.h"
+#include "cppflow/model.h"
+#include "chessnet_config.h"
 
 class ChessUniformMCTS : public MCTS<GameState,move_vector> {
 protected:

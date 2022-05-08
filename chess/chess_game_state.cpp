@@ -1,9 +1,10 @@
-#include "game_state.h"
-#include "game_logic.h"
 #include <array>
 #include <sstream>
 #include <iostream>
 #include <cassert>
+
+#include "chess_game_state.h"
+#include "chess_game_logic.h"
 
 GameState::GameState(){
 

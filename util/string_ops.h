@@ -12,7 +12,6 @@
 
 namespace util {
 	std::string strip(const std::string &str,std::string ch=" "){
-
 		unsigned int i = 0;
 		while (ch.find(str[i]) != std::string::npos)
 			i++;

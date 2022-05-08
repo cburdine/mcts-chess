@@ -1,6 +1,3 @@
-#include "chess_game.h"
-#include "chessnet_config.h"
-
 #include <cereal/cereal.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/array.hpp>
@@ -15,6 +12,9 @@
 #include <random>
 #include <fstream>
 #include <algorithm>
+
+#include "chess_game.h"
+#include "chessnet_config.h"
 
 ChessPlayerAgent::ChessPlayerAgent(color agent_color, istream& player_input) : ChessAgent(agent_color), 
     input(player_input),
@@ -510,6 +510,7 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
         mean_v_loss = 0.0; 
         mean_pi_loss = 0.0; 
         mean_total_loss = 0.0;
+        int valid_batches = 0;
         for(unsigned int i = 0; i < n_test_batches; ++i){
             auto batch_loss = new_model({{VALIDATE_X_INPUT, x_test_batches[i]},
                                     {VALIDATE_Y_PI_INPUT, y_pi_test_batches[i]},
@@ -521,13 +522,19 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
             auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
             auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
             
-            mean_v_loss += v_loss_vec[0];
-            mean_pi_loss += pi_loss_vec[0];
-            mean_total_loss += total_loss_vec[0];
+            if(!isnan(v_loss_vec[0]) && 
+               !isnan(pi_loss_vec[0] && 
+               !isnan(total_loss_vec[0]))){
+                
+                ++valid_batches;
+                mean_v_loss += v_loss_vec[0];
+                mean_pi_loss += pi_loss_vec[0];
+                mean_total_loss += total_loss_vec[0];
+            }
         }
-        mean_v_loss /= n_train_batches;
-        mean_pi_loss /= n_train_batches;
-        mean_total_loss /= n_train_batches;
+        mean_v_loss /= static_cast<double>(valid_batches);
+        mean_pi_loss /= static_cast<double>(valid_batches);
+        mean_total_loss /= static_cast<double>(valid_batches);
         final_loss = mean_total_loss;
 
         // print validation loss:
