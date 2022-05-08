@@ -34,13 +34,26 @@ int main() {
     // output value network result:
     cout << output[1] << endl;
 
+    // This attempts to reset the ADAM optimizer moments to 0:
+    cout << "-----------------------------------------------------" << endl;
+    cout << "Testing Optimizer Reset..." << endl;
+    auto opts_input = cppflow::tensor(std::string(""));
+    model({{RESET_OPTIMIZER_OPTIONS_INPUT, opts_input}},
+           {RESET_OPTIMIZER_OPTIONS_OUTPUT});
+    
+    // output policy network result:
+    cout << output[0] << endl;
+
+    // output value network result:
+    cout << output[1] << endl;
+
     // this simulates the first 100 training steps to overfit a single data point
     cout << "-----------------------------------------------------" << endl;
     cout << "Testing training steps..." << endl;
 
     auto y_pi = cppflow::fill({BATCH_SIZE,64*64}, 1.0f/(64.0f*64.0f));
     auto y_v = cppflow::fill({BATCH_SIZE}, 1.0f);
-
+     
     cout << setw(5) << "step"
          << setw(16) << "v loss"
          << setw(16) << "pi loss"
@@ -96,13 +109,14 @@ int main() {
     cout << "Testing checkpoint saving...." << endl;\
     auto f_input = cppflow::tensor(std::string("test/checkpoint"));
     cout << f_input << endl;
-    model({{"chessnet_save_path:0", f_input}},{"StatefulPartitionedCall:0"});
+    model({{SAVE_CHECKPOINT_PATH_INPUT, f_input}},
+           {SAVE_CHECKPOINT_PATH_OUTPUT});
 
     cout << "-----------------------------------------------------" << endl;
     cout << "Testing model saving...." << endl;\
     auto f_in = cppflow::tensor(std::string("test/variables"));
     cout << f_in << endl;
-    model({{"saver_filename:0", f_in}},{"StatefulPartitionedCall_4:0"});
+    model({{SAVE_MODEL_PATH_INPUT, f_in}},{SAVE_MODEL_PATH_OUTPUT});
     
     return 0;
 }
