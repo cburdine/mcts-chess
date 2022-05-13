@@ -26,7 +26,7 @@ int main(){
     load_chessnet_dataset(dataset, "chessnet_data.mcts");
     print_info(dataset, cout);
 
-    self_play_instance.do_training_steps(100, dataset, 12345, cout, true);
+    self_play_instance.do_training_steps(100, dataset, 12345, cout, true, true);
 
     /*
     // have the nnet play against itself:;

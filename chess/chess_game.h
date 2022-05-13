@@ -121,7 +121,8 @@ public:
                 chessnet_dataset& training_data, ostream& log, bool verbose = false);
 
     double do_training_steps(unsigned int n_epochs, 
-                chessnet_dataset& training_data, unsigned int seed, ostream& log, bool verbose = false);
+                chessnet_dataset& training_data, unsigned int seed, ostream& log, 
+                bool verbose = false, bool reset_optimizer = false);
 };
 
 

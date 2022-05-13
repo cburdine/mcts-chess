@@ -178,7 +178,7 @@ void ChessNetAgent::end_of_game_callback(ostream& log, bool verbose){
         bool found_distr = nnet_mcts.get_state_action_distribution(action_distribution);
 
         if(!found_distr){
-            // fall back to a delta-like distributioion about the move made:
+            // fall back to a delta-like distribution about the move made:
             action_distribution.clear();
             for(unsigned int i = 0; i < actions.size(); ++i){
                 action_distribution.push_back((actions[i] == m)? 1.0 : 0.0);
@@ -296,31 +296,14 @@ void print_info(chessnet_dataset& data, ostream& os){
     os << "Dataset (" << data.size() << " items):" << endl;
     for(auto item : data){
         auto [ board, moves, value] = item;
-        cout << "value: " << value;
+        cout << "value: " << value << "  ";
         double min_prob, max_prob = moves[0];
         for(auto m : moves){
             if(m < min_prob){ min_prob = m; }
             if(m > max_prob){ max_prob = m; }
         }
-        cout << "Min prob: "  << min_prob << endl
-             << " Max Prob: " << max_prob << endl;
-        /*
-        for (int y = 7; y >= 0; --y){
-            os << (y+1);
-            for(int x = 0; x < 8; ++x){
-                piece p = board[(y<<3) | x];
-                if(p != NONE){ 
-                    os << ' ' << to_display_char(p); 
-                } else {
-                    os << ' ' << (((x+y)&1)? '.' : '#');
-                }
-            }
-            os << endl;
-        }
-        os << ' ';
-        for(int x = 0; x < 8; ++x){ os << ' ' << (char) ('a'+x); }
-        */
-        os << endl << "-----------------------------------" << endl;
+        cout << "  Min prob: "  << min_prob
+             << "  Max Prob: " << max_prob << endl;
     }
 }
 
@@ -385,10 +368,20 @@ double ChessNetSelfPlay::do_self_play_episode(unsigned int n_games,
 }
 
 double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs, 
-            chessnet_dataset& training_data, unsigned int seed, ostream& log, bool verbose){
+            chessnet_dataset& training_data, 
+            unsigned int seed, 
+            ostream& log, 
+            bool verbose, bool reset_optimizer){
     
     double final_loss = 0.0;
-    
+
+    // reset optimizer (optional):
+    if(reset_optimizer){
+        new_model({{RESET_OPTIMIZER_OPTIONS_INPUT, 
+                    cppflow::tensor(std::string(""))}},
+                  {RESET_OPTIMIZER_OPTIONS_OUTPUT});
+    }
+
     // shuffle data:
     auto data_idxs = vector<unsigned int>(training_data.size());
     for(unsigned int i = 0; i < training_data.size(); ++i){
@@ -435,7 +428,11 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
 
             // pack y_pi tensor: [batch size, 64*64]
             for(unsigned int k = 0; k < 64*64; ++k){
-                batch_y_pi[(j*64*64) + k] = elem_probs[k];
+                if(isnan(elem_probs[k])){
+                    batch_y_pi[(j*64*64) + k] = 0.0;
+                } else {
+                    batch_y_pi[(j*64*64) + k] = elem_probs[k];
+                }
             }
 
             // pack y_v tensor: [batch size]
@@ -510,7 +507,6 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
         mean_v_loss = 0.0; 
         mean_pi_loss = 0.0; 
         mean_total_loss = 0.0;
-        int valid_batches = 0;
         for(unsigned int i = 0; i < n_test_batches; ++i){
             auto batch_loss = new_model({{VALIDATE_X_INPUT, x_test_batches[i]},
                                     {VALIDATE_Y_PI_INPUT, y_pi_test_batches[i]},
@@ -522,19 +518,15 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
             auto pi_loss_vec = cppflow::cast(batch_loss[1],TF_FLOAT, TF_DOUBLE).get_data<double>();
             auto total_loss_vec = cppflow::cast(batch_loss[2],TF_FLOAT,TF_DOUBLE).get_data<double>();
             
-            if(!isnan(v_loss_vec[0]) && 
-               !isnan(pi_loss_vec[0] && 
-               !isnan(total_loss_vec[0]))){
-                
-                ++valid_batches;
-                mean_v_loss += v_loss_vec[0];
-                mean_pi_loss += pi_loss_vec[0];
-                mean_total_loss += total_loss_vec[0];
-            }
+            
+            mean_v_loss += v_loss_vec[0];
+            mean_pi_loss += pi_loss_vec[0];
+            mean_total_loss += total_loss_vec[0];
         }
-        mean_v_loss /= static_cast<double>(valid_batches);
-        mean_pi_loss /= static_cast<double>(valid_batches);
-        mean_total_loss /= static_cast<double>(valid_batches);
+        
+        mean_v_loss /= n_test_batches;
+        mean_pi_loss /= n_test_batches;
+        mean_total_loss /= n_test_batches;
         final_loss = mean_total_loss;
 
         // print validation loss:

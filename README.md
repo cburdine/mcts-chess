@@ -62,7 +62,7 @@ The notebook server can be accessed in your browser at `http://127.0.0.1:8888/?t
 You can omit the `--gpus all` flag if GPU support is not desired. For troubleshooting, see [Tensorflow's Docker Page](https://www.tensorflow.org/install/docker).
 
 ### Run in a Python Environment
-To run the Jupyter notebooks in a regular python, you will need to install the dependencies with:
+To run the Jupyter notebooks in a regular python environment, you will need to install the dependencies with:
 ```
 pip3 install --upgrade notebook tensorflow 
 ```
