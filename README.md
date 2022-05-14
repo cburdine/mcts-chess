@@ -13,7 +13,7 @@
 ```
 A GPU-accelerated Neural Network Chess Engine written in C++ with Tensorflow. The engine uses a Monte Carlo Tree Search (MCTS) reinforement learning model, with the search process pruned by a Convolutional Neural Network. This is the same approach used in the famous paper [*Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm*](https://doi.org/10.48550/arXiv.1712.01815) by Google's [DeepMind](https://www.deepmind.com/) Team.
 
-This engine will not give [Stockfish](https://stockfishchess.org/) or [Leela Chess Zero](https://lczero.org/) a run for its money, but it is a functional neural network chess engine, with simplicity and compatibility in mind. The engine can be built and run on any system with a C++17-compatible compiler. 
+This engine will not give [Stockfish](https://stockfishchess.org/) or [Leela Chess Zero](https://lczero.org/) a run for its money, but it is a fully-functional neural network chess engine, built with simplicity and compatibility in mind. The engine can be built and run on any system with a C++17-compatible compiler. 
 
 This project does not require an installation of the C++ Tensorflow distribution. Instead, it uses the [Tensorflow C API](https://www.tensorflow.org/install/lang_c), which is much easier to install.
 
