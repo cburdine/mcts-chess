@@ -75,6 +75,8 @@ jupyter-notebook .
 ---
 ### TODO List:
 - [x] Create a Docker Image with Dockerfile
-- [ ] Include Pre-Trained Model
-- [ ] Add Better Documentation of Jupyter Notebooks
+- [x] Add a PGN file parser for training on expert games.
+- [ ] Include a better Pre-Trained Model.
+- [ ] Add Better Documentation to Jupyter Notebook.
+- [ ] Include some examples of different nnet architectures (e.g Residual Nets)
 - [ ] Implement [Rick's Method](https://youtu.be/dQw4w9WgXcQ) for rollout of states.
