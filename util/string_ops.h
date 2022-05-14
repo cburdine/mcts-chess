@@ -1,8 +1,8 @@
 #ifndef UTIL__STRING_OPS_H
 #define UTIL__STRING_OPS_H
 
-#include<string>  
-#include<vector> 
+#include <string>  
+#include <vector> 
 #include <iostream>
 
 /*
@@ -11,7 +11,7 @@
 */
 
 namespace util {
-	std::string strip(const std::string &str,std::string ch=" "){
+	inline std::string strip(const std::string &str,std::string ch=" "){
 		unsigned int i = 0;
 		while (ch.find(str[i]) != std::string::npos)
 			i++;
@@ -21,7 +21,7 @@ namespace util {
 		return str.substr(i, j+1 -i );
 	}
 	
-	std::vector<std::string> split(const std::string &str, std::string ch = " "){
+	inline std::vector<std::string> split(const std::string &str, std::string ch = " "){
 		// unused
 		return std::vector<std::string>();
 	}
