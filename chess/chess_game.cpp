@@ -548,10 +548,10 @@ void ChessNetSelfPlay::save_model(){
     new_model({{SAVE_MODEL_PATH_INPUT, path_in}},{SAVE_MODEL_PATH_OUTPUT});
 
     // re-load saved the old model as the recently saved model
-    this.old_model = cppflow::model(model_path);
+    this->old_model = cppflow::model(model_path);
 }
 
-void ChessNetSelfPlay::export_model_weights(string path){
+void ChessNetSelfPlay::export_model(string path){
     auto path_in = cppflow::tensor(std::string(path));
     new_model({{SAVE_MODEL_PATH_INPUT, path_in}},{SAVE_MODEL_PATH_OUTPUT});
 }
