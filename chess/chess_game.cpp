@@ -15,6 +15,7 @@
 
 #include "chess_game.h"
 #include "chessnet_config.h"
+#include "util/string_ops.h"
 
 ChessPlayerAgent::ChessPlayerAgent(color agent_color, istream& player_input) : ChessAgent(agent_color), 
     input(player_input),
@@ -543,8 +544,12 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
 }
 
 void ChessNetSelfPlay::save_model(){
-    // save weights to override existing weights:
-    auto path_in = cppflow::tensor(std::string(model_path));
+    // export weights to override existing weights:
+    string variables_path = util::strip(model_path);
+    if(variables_path[-1] != '/'){ variables_path += "/"; }
+    variables_path += MODEL_VARIABLES_DIR + "/" + MODEL_VARIABLES_NAME;
+
+    auto path_in = cppflow::tensor(std::string(variables_path));
     new_model({{SAVE_MODEL_PATH_INPUT, path_in}},{SAVE_MODEL_PATH_OUTPUT});
 
     // re-load saved the old model as the recently saved model

@@ -126,7 +126,7 @@ public:
 
     void save_model();
 
-    void export_model(string model_path);
+    void export_model(string path);
 
 };
 

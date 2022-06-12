@@ -60,5 +60,22 @@
 
     const std::string RESET_OPTIMIZER_OPTIONS_OUTPUT = "StatefulPartitionedCall";
 
+    /**
+     * These specify the path to the model variables (relative to the model directory).
+     * When a model is saved, it will override the data at the path:
+     * 
+     * <model_path>/<MODEL_VARIABLES_DIR>/<MODEL_VARIABLES_NAME>.data*
+     * <model_path>/<MODEL_VARIABLES_DIR>/<MODEL_VARIABLES_NAME>.index
+     * 
+     * where <model_path> is the path to the model directory.
+     * 
+     * The default location of model variables is:
+     * 
+     * <model_path>/variables/variables.data*
+     * <model_path>/variables/variables.index
+     */
+
+    const std::string MODEL_VARIABLES_DIR = "variables";
+    const std::string MODEL_VARIABLES_NAME = "variables";
 
 #endif /* CHESSNET_CONFIG_H */
