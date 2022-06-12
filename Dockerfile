@@ -9,7 +9,7 @@ RUN wget -q --no-check-certificate https://storage.googleapis.com/tensorflow/lib
 RUN tar -C /usr/local -xzf ${TF_C_FILENAME}
 RUN ldconfig /usr/local/lib
 
-RUN apt install nvidia-modprobe
+#RUN apt install nvidia-modprobe
 
 # create project directory:
 ADD . /mcts-chess
