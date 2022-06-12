@@ -37,6 +37,7 @@ int main(){
     //print_info(dataset, cout);
 
     self_play_instance.do_training_steps(100, dataset, 12345, cout, true, true);
+    self_play_instance.save_model();
 
     /*
     // have the nnet play against itself:;
@@ -53,8 +54,6 @@ int main(){
               make_unique<ChessNetAgent>(BLACK, "./jupyter/simple_chess_net"));
     game.play();
     */
-
-    
 
     return 0;
 }

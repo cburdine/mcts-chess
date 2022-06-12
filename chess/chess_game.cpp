@@ -542,3 +542,16 @@ double ChessNetSelfPlay::do_training_steps(unsigned int n_epochs,
     return final_loss;
 }
 
+void ChessNetSelfPlay::save_model(){
+    // save weights to override existing weights:
+    auto path_in = cppflow::tensor(std::string(model_path));
+    new_model({{SAVE_MODEL_PATH_INPUT, path_in}},{SAVE_MODEL_PATH_OUTPUT});
+
+    // re-load saved the old model as the recently saved model
+    this.old_model = cppflow::model(model_path);
+}
+
+void ChessNetSelfPlay::export_model_weights(string path){
+    auto path_in = cppflow::tensor(std::string(path));
+    new_model({{SAVE_MODEL_PATH_INPUT, path_in}},{SAVE_MODEL_PATH_OUTPUT});
+}

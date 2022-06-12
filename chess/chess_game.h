@@ -123,6 +123,11 @@ public:
     double do_training_steps(unsigned int n_epochs, 
                 chessnet_dataset& training_data, unsigned int seed, ostream& log, 
                 bool verbose = false, bool reset_optimizer = false);
+
+    void save_model();
+
+    void export_model(string model_path);
+
 };
 
 

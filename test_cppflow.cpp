@@ -106,14 +106,14 @@ int main() {
     }
 
     cout << "-----------------------------------------------------" << endl;
-    cout << "Testing checkpoint saving...." << endl;\
+    cout << "Testing checkpoint saving...." << endl;
     auto f_input = cppflow::tensor(std::string("test/checkpoint"));
     cout << f_input << endl;
     model({{SAVE_CHECKPOINT_PATH_INPUT, f_input}},
            {SAVE_CHECKPOINT_PATH_OUTPUT});
 
     cout << "-----------------------------------------------------" << endl;
-    cout << "Testing model saving...." << endl;\
+    cout << "Testing model saving...." << endl;
     auto f_in = cppflow::tensor(std::string("test/variables"));
     cout << f_in << endl;
     model({{SAVE_MODEL_PATH_INPUT, f_in}},{SAVE_MODEL_PATH_OUTPUT});
