@@ -56,7 +56,7 @@ private:
     unsigned int sims_per_move;
     default_random_engine rng_engine;
     uniform_real_distribution<double> random_prob;
-
+    
     vector<array<piece,64>> game_boards;
     vector<array<double,64*64>> game_probs;
     vector<move_vector> game_moves;
@@ -116,7 +116,7 @@ public:
                         unsigned int batch_size = 4, 
                         unsigned int sims_per_move = 256, 
                         double validation_holdout = 0.1);
-
+    
     double do_self_play_episode(unsigned int n_games, 
                 chessnet_dataset& training_data, ostream& log, bool verbose = false);
 
@@ -124,7 +124,6 @@ public:
                 chessnet_dataset& training_data, unsigned int seed, ostream& log, 
                 bool verbose = false, bool reset_optimizer = false);
 };
-
 
 
 #endif /* CHESS_GAME_H */

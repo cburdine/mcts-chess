@@ -2,9 +2,10 @@
 #include <cassert>
 #include <array>
 #include <string>
+#include <array>
 
 #include "util/string_ops.h"
-#include "chess_game_logic.h"
+#include "chess/chess_game_logic.h"
 
 using namespace std;
 
@@ -85,10 +86,12 @@ string to_movestring(GameState gs, move_vector m, bool shorthand){
 bool parse_text_move(move_vector& m, GameState& gs, color player_to_move, string str){
 
     const string PIECES = "PRNBQK";
-
     auto valid_moves = get_valid_moves(gs, player_to_move);
 
     string ss = util::strip(str);
+    ss = util::strip(ss," +#!?");
+
+
     if(ss.size() == 0){ return false; }
 
     if(ss == "rcastle" || ss == "OO" || ss == "O-O" || ss == "00" || ss == "0-0"){
@@ -98,8 +101,8 @@ bool parse_text_move(move_vector& m, GameState& gs, color player_to_move, string
                 m = v;
                 return true;
             }
-            return false;
         }
+        return false;
     }
     
     if(ss == "lcastle" || ss == "OOO" || ss == "O-O-O" 
@@ -110,32 +113,96 @@ bool parse_text_move(move_vector& m, GameState& gs, color player_to_move, string
                 m = v;
                 return true;
             }
+        }
+        return false;
+    }
+
+    piece src_p = NONE, prom_p = NONE;
+    bool capture = false;
+    int v_src_x = -1, v_src_y = -1, 
+        v_dest_x = -1, v_dest_y = -1;
+    
+    // check if string is of the form "xx xx"
+    // (using rank-file notation)
+    if(ss.find(" ") != string::npos){
+        if(ss.size() != 5){ return false; }
+        v_src_x = (ss[0]-'a');
+        v_src_y = (ss[1]-'1');
+        v_dest_x = (ss[3]-'a');
+        v_dest_y = (ss[4]-'1');
+
+        if( !(0 <= v_src_x && v_src_x < 8)
+        || !(0 <= v_src_y && v_src_y < 8)
+        || !(0 <= v_dest_x && v_dest_x < 8)
+        || !(0 <= v_dest_y && v_dest_y < 8) ){
             return false;
         }
-    }
 
-    
-    // ensure string is of the form "xx xx"
-    // using rank-file notation
-    if(ss.size() != 5){ return false; }
+        for(move_vector v : valid_moves){
+            if(v_src_x == src_x(v) && v_src_y == src_y(v) 
+            && v_dest_x == dest_x(v) && v_dest_y == dest_y(v)){
+                m = v;
+                return true;
+            }
+        }
+    } else {
+        // handle SAN notation (reference: https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) 
+        src_p = static_cast<piece>(W_PAWN | player_to_move); // piece defaults to pawn
+        for(int idx = ss.size()-1; idx >= 0; --idx){
+            char ch = ss[idx];
+            if('1' <= ch && ch <= '8'){
+                if(v_dest_y < 0){ v_dest_y = static_cast<int>(ch - '1'); }
+                else{ v_src_y = static_cast<int>(ch - '1');}
+            } else if('a' <= ch && ch <= 'h'){
+                if(v_dest_x < 0){ v_dest_x = static_cast<int>(ch - 'a'); }
+                else{ v_src_x = static_cast<int>(ch - 'a');}
+            } else if(PIECES.find(ch) != string::npos){
+                src_p = static_cast<piece>(((PIECES.find(ch)+1)<<1)|int(player_to_move));
+            } else if(ch == 'x'){
+                capture = true;
+            } else if(ch == '='){
+                prom_p = src_p;
+                src_p = static_cast<piece>(W_PAWN | player_to_move);
+            }
+        }
 
-    int v_src_x, v_src_y, v_dest_x, v_dest_y;
-    v_src_x = (ss[0]-'a');
-    v_src_y = (ss[1]-'1');
-    v_dest_x = (ss[3]-'a');
-    v_dest_y = (ss[4]-'1');
+        vector<move_vector> matched_mvs;
+        /*
+        cout << gs << endl;
+        cout << ss << endl;
+        cout << v_src_x << " " << v_src_y << endl;
+        cout << v_dest_x << " " << v_dest_y << endl;
+        cout << capture << " " << src_p
+             << " " << get_color(src_p) << endl;
+        */
+        
+        for(move_vector v : valid_moves){
+            /*
+            cout << to_movestring(gs, v) << endl;
+            cout << (v_src_x < 0  || v_src_x == src_x(v))
+                << (v_src_y < 0  || v_src_y == src_y(v))    
+                << (v_dest_x < 0 || v_dest_x == dest_x(v)) 
+                << (v_dest_y < 0 || v_dest_y == dest_y(v))
+                << ((captured_piece(v) != NONE) == capture)
+                << (src_p == gs.get_piece(src_x(v),src_y(v))) 
+                << (prom_p == promoted_piece(v)) << endl; 
+            */
+            
+            if((v_src_x < 0  || v_src_x == src_x(v))    &&
+               (v_src_y < 0  || v_src_y == src_y(v))    &&
+               (v_dest_x < 0 || v_dest_x == dest_x(v))  &&
+               (v_dest_y < 0 || v_dest_y == dest_y(v))  &&
+               ((captured_piece(v) != NONE) == capture)     &&
+               (src_p == gs.get_piece(src_x(v),src_y(v)))   &&
+               (prom_p == promoted_piece(v))
+               ){
+                // add match to list:    
+                matched_mvs.push_back(v);
+            }
+        }
 
-    if( !(0 <= v_src_x && v_src_x < 8)
-     || !(0 <= v_src_y && v_src_y < 8)
-     || !(0 <= v_dest_x && v_dest_x < 8)
-     || !(0 <= v_dest_y && v_dest_y < 8) ){
-         return false;
-    }
-
-    for(move_vector v : valid_moves){
-        if(v_src_x == src_x(v) && v_src_y == src_y(v) 
-        && v_dest_x == dest_x(v) && v_dest_y == dest_y(v)){
-            m = v;
+        if(matched_mvs.size() == 1){
+            m = matched_mvs[0];
             return true;
         }
     }
@@ -750,14 +817,16 @@ vector<move_vector> get_valid_moves(GameState& gs, color player){
 }
 
 
-inline void add_valid_pawn_moves(GameState& gs, color player, move_vector base_m, int x, int y, vector<move_vector>& moves){
+inline void add_valid_pawn_moves(GameState& gs, color player, move_vector base_m, int x, int y, 
+                                 vector<move_vector>& moves){
     
     assert(is_pawn(gs.get_piece(x,y)));
     assert(get_color(gs.get_piece(x,y)) == player);
     assert(y > 0);
     assert(y < 7);
 
-    // TODO: handle pawn "underpromotion"
+    const array<piece,4> W_PROMOTIONS = { W_QUEEN, W_KNIGHT, W_BISHOP, W_ROOK };
+    const array<piece,4> B_PROMOTIONS = { B_QUEEN, B_KNIGHT, B_BISHOP, B_ROOK };
 
     piece cap_p;
     move_vector m2 = 0;
@@ -775,11 +844,18 @@ inline void add_valid_pawn_moves(GameState& gs, color player, move_vector base_m
             set_dest_pos(m2,xt,yt);
             set_captured_piece(m2, cap_p);
             if(player == WHITE && yt == 7){
-                set_promoted_piece(m2, W_QUEEN);
+                for(piece prom_p : W_PROMOTIONS){
+                    set_promoted_piece(m2, prom_p);
+                    if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
+                }
             } else if(player == BLACK && yt == 0){
-                set_promoted_piece(m2, B_QUEEN);
+                for(piece prom_p : B_PROMOTIONS){
+                    set_promoted_piece(m2, prom_p);
+                    if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
+                }
+            } else if(!move_will_check_king(gs, m2, player)){ 
+                moves.push_back(m2); 
             }
-            if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
         }
 
         // check en passant in dx direction:
@@ -800,16 +876,23 @@ inline void add_valid_pawn_moves(GameState& gs, color player, move_vector base_m
         }
     }
 
-    // check for forward move:
+    // check for forward move (and pawn promotions):
     if(!gs.get_piece(x,yt)){
         m2 = base_m;
         set_dest_pos(m2,x,yt);
         if(player == WHITE && yt == 7){
-            set_promoted_piece(m2, W_QUEEN);
+            for(piece prom_p : W_PROMOTIONS){
+                set_promoted_piece(m2, prom_p);
+                if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
+            }
         } else if(player == BLACK && yt == 0){
-            set_promoted_piece(m2, B_QUEEN);
+            for(piece prom_p : B_PROMOTIONS){
+                set_promoted_piece(m2, prom_p);
+                if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
+            }
+        } else {
+            if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
         }
-        if(!move_will_check_king(gs, m2, player)){ moves.push_back(m2); }
 
         // check for double move forward:
         if(player == WHITE && y == 1 && !gs.get_piece(x,3)){
