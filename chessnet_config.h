@@ -10,8 +10,8 @@
      *  compile the test_cppflow target in the Makefile and run it.
      *  (The binary will be compiiled in the ./bin directory)
      * 
-     *  The first thing printed by test_cppflow is a list of graph operations
-     *  at the end of the list are a sequence of arguments followed by the exported
+     *  The first thing printed by test_cppflow is a list of graph operations.
+     *  At the end of the list are a sequence of arguments followed by the exported
      *  operation name (of the form "StatefulPartitionedCall*"). You can identify each function
      *  by its preceding arguments, which are exported according to their name as python arguments:
      * 
