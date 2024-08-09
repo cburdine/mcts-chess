@@ -57,14 +57,14 @@ inline tensor accumulate_n_v2(const std::vector<tensor>&inputs, const std::vecto
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrInt(op.get(), "N", inputs.size());
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -248,7 +248,7 @@ inline tensor add_n(const std::vector<tensor>&inputs) {
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -538,13 +538,13 @@ inline tensor anonymous_iterator(const std::vector<datatype>& output_types, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -1531,13 +1531,13 @@ inline tensor assert_cardinality_dataset(const tensor& input_dataset, const tens
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -1567,13 +1567,13 @@ inline tensor assert_next_dataset(const tensor& input_dataset, const tensor& tra
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -1855,13 +1855,13 @@ inline tensor auto_shard_dataset(const tensor& input_dataset, const tensor& num_
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "auto_shard_policy", auto_shard_policy);
@@ -1888,8 +1888,8 @@ inline tensor avg_pool(const tensor& value, const std::vector<int64_t>& ksize, c
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -1915,8 +1915,8 @@ inline tensor avg_pool3_d(const tensor& input, const std::vector<int64_t>& ksize
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -1946,8 +1946,8 @@ inline tensor avg_pool3_d_grad(const tensor& orig_input_shape, const tensor& gra
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -1977,8 +1977,8 @@ inline tensor avg_pool_grad(const tensor& orig_input_shape, const tensor& grad, 
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -2030,13 +2030,13 @@ inline tensor barrier(const std::vector<datatype>& component_types, const std::v
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -2169,13 +2169,13 @@ inline tensor batch_dataset(const tensor& input_dataset, const tensor& batch_siz
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -2209,13 +2209,13 @@ inline tensor batch_dataset_v2(const tensor& input_dataset, const tensor& batch_
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "parallel_copy", (unsigned char)parallel_copy);
@@ -3390,13 +3390,13 @@ inline tensor boosted_trees_bucketize(const std::vector<tensor>&float_values, co
     
     std::vector<TFE_TensorHandle*> float_values_handles; float_values_handles.reserve(float_values.size());
     std::transform(float_values.begin(), float_values.end(), std::back_inserter(float_values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), float_values_handles.data(), float_values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), float_values_handles.data(), static_cast<int>(float_values.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> bucket_boundaries_handles; bucket_boundaries_handles.reserve(bucket_boundaries.size());
     std::transform(bucket_boundaries.begin(), bucket_boundaries.end(), std::back_inserter(bucket_boundaries_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), bucket_boundaries_handles.data(), bucket_boundaries.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), bucket_boundaries_handles.data(), static_cast<int>(bucket_boundaries.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3488,7 +3488,7 @@ inline tensor boosted_trees_example_debug_outputs(const tensor& tree_ensemble_ha
     
     std::vector<TFE_TensorHandle*> bucketized_features_handles; bucketized_features_handles.reserve(bucketized_features.size());
     std::transform(bucketized_features.begin(), bucketized_features.end(), std::back_inserter(bucketized_features_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), bucketized_features_handles.data(), bucketized_features.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), bucketized_features_handles.data(), static_cast<int>(bucketized_features.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3539,7 +3539,7 @@ inline tensor boosted_trees_make_quantile_summaries(const std::vector<tensor>&fl
     
     std::vector<TFE_TensorHandle*> float_values_handles; float_values_handles.reserve(float_values.size());
     std::transform(float_values.begin(), float_values.end(), std::back_inserter(float_values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), float_values_handles.data(), float_values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), float_values_handles.data(), static_cast<int>(float_values.size()), context::get_status());
     status_check(context::get_status());
     
     
@@ -3585,7 +3585,7 @@ inline tensor boosted_trees_make_stats_summary(const tensor& node_ids, const ten
     
     std::vector<TFE_TensorHandle*> bucketized_features_list_handles; bucketized_features_list_handles.reserve(bucketized_features_list.size());
     std::transform(bucketized_features_list.begin(), bucketized_features_list.end(), std::back_inserter(bucketized_features_list_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), bucketized_features_list_handles.data(), bucketized_features_list.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), bucketized_features_list_handles.data(), static_cast<int>(bucketized_features_list.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3617,7 +3617,7 @@ inline tensor boosted_trees_predict(const tensor& tree_ensemble_handle, const st
     
     std::vector<TFE_TensorHandle*> bucketized_features_handles; bucketized_features_handles.reserve(bucketized_features.size());
     std::transform(bucketized_features.begin(), bucketized_features.end(), std::back_inserter(bucketized_features_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), bucketized_features_handles.data(), bucketized_features.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), bucketized_features_handles.data(), static_cast<int>(bucketized_features.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3749,7 +3749,7 @@ inline tensor bucketize(const tensor& input, const std::vector<float>& boundarie
     
 
     // Attributes
-    TFE_OpSetAttrFloatList(op.get(), "boundaries", boundaries.data(), boundaries.size());
+    TFE_OpSetAttrFloatList(op.get(), "boundaries", boundaries.data(), static_cast<int>(boundaries.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -3777,13 +3777,13 @@ inline tensor bytes_produced_stats_dataset(const tensor& input_dataset, const te
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3862,18 +3862,18 @@ inline tensor c_s_v_dataset(const tensor& filenames, const tensor& compression_t
     
     std::vector<TFE_TensorHandle*> record_defaults_handles; record_defaults_handles.reserve(record_defaults.size());
     std::transform(record_defaults.begin(), record_defaults.end(), std::back_inserter(record_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), record_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), static_cast<int>(record_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3903,13 +3903,13 @@ inline tensor cache_dataset(const tensor& input_dataset, const tensor& filename,
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -3943,13 +3943,13 @@ inline tensor cache_dataset_v2(const tensor& input_dataset, const tensor& filena
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -4122,20 +4122,20 @@ inline tensor choose_fastest_dataset(const std::vector<tensor>&input_datasets, i
     
     std::vector<TFE_TensorHandle*> input_datasets_handles; input_datasets_handles.reserve(input_datasets.size());
     std::transform(input_datasets.begin(), input_datasets.end(), std::back_inserter(input_datasets_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), input_datasets.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), static_cast<int>(input_datasets.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrInt(op.get(), "N", input_datasets.size());
     TFE_OpSetAttrInt(op.get(), "num_experiments", num_experiments);
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -4194,7 +4194,7 @@ inline tensor collective_bcast_recv(int64_t group_size, int64_t group_key, int64
     TFE_OpSetAttrInt(op.get(), "group_key", group_key);
     TFE_OpSetAttrInt(op.get(), "instance_key", instance_key);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "communication_hint", (void*) communication_hint.c_str(), communication_hint.size());
@@ -4226,7 +4226,7 @@ inline tensor collective_bcast_send(const tensor& input, int64_t group_size, int
     TFE_OpSetAttrInt(op.get(), "group_key", group_key);
     TFE_OpSetAttrInt(op.get(), "instance_key", instance_key);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "communication_hint", (void*) communication_hint.c_str(), communication_hint.size());
@@ -4258,7 +4258,7 @@ inline tensor collective_gather(const tensor& input, int64_t group_size, int64_t
     TFE_OpSetAttrInt(op.get(), "group_key", group_key);
     TFE_OpSetAttrInt(op.get(), "instance_key", instance_key);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "communication_hint", (void*) communication_hint.c_str(), communication_hint.size());
@@ -4319,8 +4319,8 @@ inline tensor collective_reduce(const tensor& input, int64_t group_size, int64_t
     TFE_OpSetAttrInt(op.get(), "instance_key", instance_key);
     TFE_OpSetAttrString(op.get(), "merge_op", (void*) merge_op.c_str(), merge_op.size());
     TFE_OpSetAttrString(op.get(), "final_op", (void*) final_op.c_str(), final_op.size());
-    TFE_OpSetAttrIntList(op.get(), "subdiv_offsets", subdiv_offsets.data(), subdiv_offsets.size());
-    TFE_OpSetAttrIntList(op.get(), "wait_for", wait_for.data(), wait_for.size());
+    TFE_OpSetAttrIntList(op.get(), "subdiv_offsets", subdiv_offsets.data(), static_cast<int>(subdiv_offsets.size()));
+    TFE_OpSetAttrIntList(op.get(), "wait_for", wait_for.data(), static_cast<int>(wait_for.size()));
     TFE_OpSetAttrString(op.get(), "communication_hint", (void*) communication_hint.c_str(), communication_hint.size());
     TFE_OpSetAttrFloat(op.get(), "timeout_seconds", timeout_seconds);
 
@@ -4423,12 +4423,12 @@ inline tensor compress_element(const std::vector<tensor>&components, const std::
     
     std::vector<TFE_TensorHandle*> components_handles; components_handles.reserve(components.size());
     std::transform(components.begin(), components.end(), std::back_inserter(components_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), components_handles.data(), components.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), components_handles.data(), static_cast<int>(components.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "input_types", reinterpret_cast<const enum TF_DataType *>(input_types.data()), input_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "input_types", reinterpret_cast<const enum TF_DataType *>(input_types.data()), static_cast<int>(input_types.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -4453,7 +4453,7 @@ inline tensor concat(const tensor& concat_dim, const std::vector<tensor>&values)
     
     std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), values_handles.data(), static_cast<int>(values.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -4483,7 +4483,7 @@ inline tensor concat_offset(const tensor& concat_dim, const std::vector<tensor>&
     
     std::vector<TFE_TensorHandle*> shape_handles; shape_handles.reserve(shape.size());
     std::transform(shape.begin(), shape.end(), std::back_inserter(shape_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), shape_handles.data(), shape.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), shape_handles.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -4509,7 +4509,7 @@ inline tensor concat_v2(const std::vector<tensor>&values, const tensor& axis, da
     
     std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), values_handles.data(), static_cast<int>(values.size()), context::get_status());
     status_check(context::get_status());
     
     
@@ -4547,13 +4547,13 @@ inline tensor concatenate_dataset(const tensor& input_dataset, const tensor& ano
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -4578,7 +4578,7 @@ inline tensor conditional_accumulator(datatype dtype, const std::vector<int64_t>
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -4713,10 +4713,10 @@ inline tensor conv2_d(const tensor& input, const tensor& filter, const std::vect
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrBool(op.get(), "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -4750,10 +4750,10 @@ inline tensor conv2_d_backprop_filter(const tensor& input, const tensor& filter_
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrBool(op.get(), "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -4787,10 +4787,10 @@ inline tensor conv2_d_backprop_input(const tensor& input_sizes, const tensor& fi
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrBool(op.get(), "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -4820,9 +4820,9 @@ inline tensor conv3_d(const tensor& input, const tensor& filter, const std::vect
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
     // Execute Op
@@ -4855,9 +4855,9 @@ inline tensor conv3_d_backprop_filter(const tensor& input, const tensor& filter,
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -4889,9 +4889,9 @@ inline tensor conv3_d_backprop_filter_v2(const tensor& input, const tensor& filt
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
     // Execute Op
@@ -4924,9 +4924,9 @@ inline tensor conv3_d_backprop_input(const tensor& input, const tensor& filter, 
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -4958,9 +4958,9 @@ inline tensor conv3_d_backprop_input_v2(const tensor& input_sizes, const tensor&
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
     TFE_OpSetAttrType(op.get(), "Tshape", Tshape);
 
@@ -4989,7 +4989,7 @@ inline tensor copy(const tensor& input, const std::vector< std::string>& debug_o
     
     std::vector<std::size_t> debug_ops_spec_sizes; debug_ops_spec_sizes.reserve(debug_ops_spec.size());
     std::transform(debug_ops_spec.begin(), debug_ops_spec.end(), std::back_inserter(debug_ops_spec_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_ops_spec", reinterpret_cast<const void *const *>(debug_ops_spec.data()), debug_ops_spec_sizes.data(), debug_ops_spec.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_ops_spec", reinterpret_cast<const void *const *>(debug_ops_spec.data()), debug_ops_spec_sizes.data(), static_cast<int>(debug_ops_spec.size()));
     
     TFE_OpSetAttrString(op.get(), "tensor_name", (void*) tensor_name.c_str(), tensor_name.size());
 
@@ -5018,7 +5018,7 @@ inline tensor copy_host(const tensor& input, const std::vector< std::string>& de
     
     std::vector<std::size_t> debug_ops_spec_sizes; debug_ops_spec_sizes.reserve(debug_ops_spec.size());
     std::transform(debug_ops_spec.begin(), debug_ops_spec.end(), std::back_inserter(debug_ops_spec_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_ops_spec", reinterpret_cast<const void *const *>(debug_ops_spec.data()), debug_ops_spec_sizes.data(), debug_ops_spec.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_ops_spec", reinterpret_cast<const void *const *>(debug_ops_spec.data()), debug_ops_spec_sizes.data(), static_cast<int>(debug_ops_spec.size()));
     
     TFE_OpSetAttrString(op.get(), "tensor_name", (void*) tensor_name.c_str(), tensor_name.size());
 
@@ -5290,13 +5290,13 @@ inline tensor cudnn_r_n_n_canonical_to_params(const tensor& num_layers, const te
     
     std::vector<TFE_TensorHandle*> weights_handles; weights_handles.reserve(weights.size());
     std::transform(weights.begin(), weights.end(), std::back_inserter(weights_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), weights_handles.data(), weights.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), weights_handles.data(), static_cast<int>(weights.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> biases_handles; biases_handles.reserve(biases.size());
     std::transform(biases.begin(), biases.end(), std::back_inserter(biases_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), biases_handles.data(), biases.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), biases_handles.data(), static_cast<int>(biases.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -5340,13 +5340,13 @@ inline tensor cudnn_r_n_n_canonical_to_params_v2(const tensor& num_layers, const
     
     std::vector<TFE_TensorHandle*> weights_handles; weights_handles.reserve(weights.size());
     std::transform(weights.begin(), weights.end(), std::back_inserter(weights_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), weights_handles.data(), weights.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), weights_handles.data(), static_cast<int>(weights.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> biases_handles; biases_handles.reserve(biases.size());
     std::transform(biases.begin(), biases.end(), std::back_inserter(biases_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), biases_handles.data(), biases.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), biases_handles.data(), static_cast<int>(biases.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -5586,13 +5586,13 @@ inline tensor data_service_dataset(const tensor& dataset_id, const tensor& proce
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "task_refresh_interval_hint_ms", task_refresh_interval_hint_ms);
@@ -5670,7 +5670,7 @@ inline tensor dataset_to_graph(const tensor& input_dataset, const std::vector< s
     
     std::vector<std::size_t> stateful_whitelist_sizes; stateful_whitelist_sizes.reserve(stateful_whitelist.size());
     std::transform(stateful_whitelist.begin(), stateful_whitelist.end(), std::back_inserter(stateful_whitelist_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "stateful_whitelist", reinterpret_cast<const void *const *>(stateful_whitelist.data()), stateful_whitelist_sizes.data(), stateful_whitelist.size());
+    TFE_OpSetAttrStringList(op.get(), "stateful_whitelist", reinterpret_cast<const void *const *>(stateful_whitelist.data()), stateful_whitelist_sizes.data(), static_cast<int>(stateful_whitelist.size()));
     
     TFE_OpSetAttrBool(op.get(), "allow_stateful", (unsigned char)allow_stateful);
     TFE_OpSetAttrBool(op.get(), "strip_device_assignment", (unsigned char)strip_device_assignment);
@@ -5722,13 +5722,13 @@ inline tensor dataset_to_single_element(const tensor& dataset, const std::vector
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -5829,7 +5829,7 @@ inline tensor debug_identity(const tensor& input, const std::vector< std::string
     
     std::vector<std::size_t> debug_urls_sizes; debug_urls_sizes.reserve(debug_urls.size());
     std::transform(debug_urls.begin(), debug_urls.end(), std::back_inserter(debug_urls_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), debug_urls.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), static_cast<int>(debug_urls.size()));
     
     TFE_OpSetAttrString(op.get(), "device_name", (void*) device_name.c_str(), device_name.size());
     TFE_OpSetAttrString(op.get(), "tensor_name", (void*) tensor_name.c_str(), tensor_name.size());
@@ -5860,7 +5860,7 @@ inline tensor debug_identity_v2(const tensor& input, const std::vector< std::str
     
     std::vector<std::size_t> debug_urls_sizes; debug_urls_sizes.reserve(debug_urls.size());
     std::transform(debug_urls.begin(), debug_urls.end(), std::back_inserter(debug_urls_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), debug_urls.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), static_cast<int>(debug_urls.size()));
     
     TFE_OpSetAttrString(op.get(), "tfdbg_context_id", (void*) tfdbg_context_id.c_str(), tfdbg_context_id.size());
     TFE_OpSetAttrString(op.get(), "op_name", (void*) op_name.c_str(), op_name.size());
@@ -5894,7 +5894,7 @@ inline tensor debug_nan_count(const tensor& input, const std::vector< std::strin
     
     std::vector<std::size_t> debug_urls_sizes; debug_urls_sizes.reserve(debug_urls.size());
     std::transform(debug_urls.begin(), debug_urls.end(), std::back_inserter(debug_urls_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), debug_urls.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), static_cast<int>(debug_urls.size()));
     
     TFE_OpSetAttrString(op.get(), "device_name", (void*) device_name.c_str(), device_name.size());
     TFE_OpSetAttrString(op.get(), "tensor_name", (void*) tensor_name.c_str(), tensor_name.size());
@@ -5925,7 +5925,7 @@ inline tensor debug_numeric_summary(const tensor& input, const std::vector< std:
     
     std::vector<std::size_t> debug_urls_sizes; debug_urls_sizes.reserve(debug_urls.size());
     std::transform(debug_urls.begin(), debug_urls.end(), std::back_inserter(debug_urls_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), debug_urls.size());
+    TFE_OpSetAttrStringList(op.get(), "debug_urls", reinterpret_cast<const void *const *>(debug_urls.data()), debug_urls_sizes.data(), static_cast<int>(debug_urls.size()));
     
     TFE_OpSetAttrString(op.get(), "device_name", (void*) device_name.c_str(), device_name.size());
     TFE_OpSetAttrString(op.get(), "tensor_name", (void*) tensor_name.c_str(), tensor_name.size());
@@ -6064,13 +6064,13 @@ inline tensor decode_c_s_v(const tensor& records, const std::vector<tensor>&reco
     
     std::vector<TFE_TensorHandle*> record_defaults_handles; record_defaults_handles.reserve(record_defaults.size());
     std::transform(record_defaults.begin(), record_defaults.end(), std::back_inserter(record_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), record_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), static_cast<int>(record_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "OUT_TYPE", reinterpret_cast<const enum TF_DataType *>(OUT_TYPE.data()), OUT_TYPE.size());
-    TFE_OpSetAttrIntList(op.get(), "select_cols", select_cols.data(), select_cols.size());
+    TFE_OpSetAttrTypeList(op.get(), "OUT_TYPE", reinterpret_cast<const enum TF_DataType *>(OUT_TYPE.data()), static_cast<int>(OUT_TYPE.size()));
+    TFE_OpSetAttrIntList(op.get(), "select_cols", select_cols.data(), static_cast<int>(select_cols.size()));
     TFE_OpSetAttrString(op.get(), "field_delim", (void*) field_delim.c_str(), field_delim.size());
     TFE_OpSetAttrBool(op.get(), "use_quote_delim", (unsigned char)use_quote_delim);
     TFE_OpSetAttrString(op.get(), "na_value", (void*) na_value.c_str(), na_value.size());
@@ -6122,6 +6122,32 @@ inline tensor decode_gif(const tensor& contents) {
 
     // Attributes
     
+
+    // Execute Op
+    int num_outputs_op = 1;
+    TFE_TensorHandle* res[1] = {nullptr};
+    TFE_Execute(op.get(), res, &num_outputs_op, context::get_status());
+    status_check(context::get_status());
+    return tensor(res[0]);
+}
+
+
+inline tensor decode_image(const tensor& contents, int64_t channels=0, datatype dtype=static_cast<datatype>(4), bool expand_animations=true) {
+
+    // Define Op
+    std::unique_ptr<TFE_Op, decltype(&TFE_DeleteOp)> op(TFE_NewOp(context::get_context(), "DecodeImage", context::get_status()), &TFE_DeleteOp);
+    status_check(context::get_status());
+
+    // Required input arguments
+    
+    TFE_OpAddInput(op.get(), contents.tfe_handle.get(), context::get_status());
+    status_check(context::get_status());
+    
+
+    // Attributes
+    TFE_OpSetAttrInt(op.get(), "channels", channels);
+    TFE_OpSetAttrType(op.get(), "dtype", dtype);
+    TFE_OpSetAttrBool(op.get(), "expand_animations", (unsigned char)expand_animations);
 
     // Execute Op
     int num_outputs_op = 1;
@@ -6370,13 +6396,13 @@ inline tensor dense_to_sparse_batch_dataset(const tensor& input_dataset, const t
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -6431,10 +6457,10 @@ inline tensor depthwise_conv2d_native(const tensor& input, const tensor& filter,
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
     // Execute Op
@@ -6467,10 +6493,10 @@ inline tensor depthwise_conv2d_native_backprop_filter(const tensor& input, const
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
     // Execute Op
@@ -6503,10 +6529,10 @@ inline tensor depthwise_conv2d_native_backprop_input(const tensor& input_sizes, 
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op.get(), "explicit_paddings", explicit_paddings.data(), static_cast<int>(explicit_paddings.size()));
+    TFE_OpSetAttrIntList(op.get(), "dilations", dilations.data(), static_cast<int>(dilations.size()));
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
     // Execute Op
@@ -6590,7 +6616,7 @@ inline tensor device_index(const std::vector< std::string>& device_names) {
     
     std::vector<std::size_t> device_names_sizes; device_names_sizes.reserve(device_names.size());
     std::transform(device_names.begin(), device_names.end(), std::back_inserter(device_names_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "device_names", reinterpret_cast<const void *const *>(device_names.data()), device_names_sizes.data(), device_names.size());
+    TFE_OpSetAttrStringList(op.get(), "device_names", reinterpret_cast<const void *const *>(device_names.data()), device_names_sizes.data(), static_cast<int>(device_names.size()));
     
 
     // Execute Op
@@ -6691,8 +6717,8 @@ inline tensor dilation2_d(const tensor& input, const tensor& filter, const std::
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
-    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), rates.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
+    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), static_cast<int>(rates.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -6725,8 +6751,8 @@ inline tensor dilation2_d_backprop_filter(const tensor& input, const tensor& fil
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
-    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), rates.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
+    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), static_cast<int>(rates.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -6759,8 +6785,8 @@ inline tensor dilation2_d_backprop_input(const tensor& input, const tensor& filt
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
-    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), rates.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
+    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), static_cast<int>(rates.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -6786,18 +6812,18 @@ inline tensor directed_interleave_dataset(const tensor& selector_input_dataset, 
     
     std::vector<TFE_TensorHandle*> data_input_datasets_handles; data_input_datasets_handles.reserve(data_input_datasets.size());
     std::transform(data_input_datasets.begin(), data_input_datasets.end(), std::back_inserter(data_input_datasets_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), data_input_datasets_handles.data(), data_input_datasets.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), data_input_datasets_handles.data(), static_cast<int>(data_input_datasets.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "N", data_input_datasets.size());
@@ -7028,13 +7054,13 @@ inline tensor dynamic_stitch(const std::vector<tensor>&indices, const std::vecto
     
     std::vector<TFE_TensorHandle*> indices_handles; indices_handles.reserve(indices.size());
     std::transform(indices.begin(), indices.end(), std::back_inserter(indices_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), indices_handles.data(), indices.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), indices_handles.data(), static_cast<int>(indices.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> data_handles; data_handles.reserve(data.size());
     std::transform(data.begin(), data.end(), std::back_inserter(data_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), data_handles.data(), data.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), data_handles.data(), static_cast<int>(data.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7060,14 +7086,14 @@ inline tensor eager_py_func(const std::vector<tensor>&input, const std::string& 
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrString(op.get(), "token", (void*) token.c_str(), token.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), Tin.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), Tout.size());
+    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), static_cast<int>(Tin.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), static_cast<int>(Tout.size()));
     TFE_OpSetAttrBool(op.get(), "is_async", (unsigned char)is_async);
 
     // Execute Op
@@ -7133,7 +7159,7 @@ inline tensor einsum(const std::vector<tensor>&inputs, const std::string& equati
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7378,7 +7404,7 @@ inline tensor encode_proto(const tensor& sizes, const std::vector<tensor>&values
     
     std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), values_handles.data(), static_cast<int>(values.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7386,10 +7412,10 @@ inline tensor encode_proto(const tensor& sizes, const std::vector<tensor>&values
     
     std::vector<std::size_t> field_names_sizes; field_names_sizes.reserve(field_names.size());
     std::transform(field_names.begin(), field_names.end(), std::back_inserter(field_names_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "field_names", reinterpret_cast<const void *const *>(field_names.data()), field_names_sizes.data(), field_names.size());
+    TFE_OpSetAttrStringList(op.get(), "field_names", reinterpret_cast<const void *const *>(field_names.data()), field_names_sizes.data(), static_cast<int>(field_names.size()));
     
     TFE_OpSetAttrString(op.get(), "message_type", (void*) message_type.c_str(), message_type.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tinput_types", reinterpret_cast<const enum TF_DataType *>(Tinput_types.data()), Tinput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Tinput_types", reinterpret_cast<const enum TF_DataType *>(Tinput_types.data()), static_cast<int>(Tinput_types.size()));
     TFE_OpSetAttrString(op.get(), "descriptor_source", (void*) descriptor_source.c_str(), descriptor_source.size());
 
     // Execute Op
@@ -7443,7 +7469,7 @@ inline tensor ensure_shape(const tensor& input, const std::vector<int64_t>& shap
 
     // Attributes
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7704,13 +7730,13 @@ inline tensor experimental_assert_next_dataset(const tensor& input_dataset, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7744,13 +7770,13 @@ inline tensor experimental_auto_shard_dataset(const tensor& input_dataset, const
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "auto_shard_policy", auto_shard_policy);
@@ -7781,13 +7807,13 @@ inline tensor experimental_bytes_produced_stats_dataset(const tensor& input_data
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7842,18 +7868,18 @@ inline tensor experimental_c_s_v_dataset(const tensor& filenames, const tensor& 
     
     std::vector<TFE_TensorHandle*> record_defaults_handles; record_defaults_handles.reserve(record_defaults.size());
     std::transform(record_defaults.begin(), record_defaults.end(), std::back_inserter(record_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), record_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), record_defaults_handles.data(), static_cast<int>(record_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7876,20 +7902,20 @@ inline tensor experimental_choose_fastest_dataset(const std::vector<tensor>&inpu
     
     std::vector<TFE_TensorHandle*> input_datasets_handles; input_datasets_handles.reserve(input_datasets.size());
     std::transform(input_datasets.begin(), input_datasets.end(), std::back_inserter(input_datasets_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), input_datasets.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), static_cast<int>(input_datasets.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrInt(op.get(), "N", input_datasets.size());
     TFE_OpSetAttrInt(op.get(), "num_experiments", num_experiments);
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7947,13 +7973,13 @@ inline tensor experimental_dense_to_sparse_batch_dataset(const tensor& input_dat
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -7980,18 +8006,18 @@ inline tensor experimental_directed_interleave_dataset(const tensor& selector_in
     
     std::vector<TFE_TensorHandle*> data_input_datasets_handles; data_input_datasets_handles.reserve(data_input_datasets.size());
     std::transform(data_input_datasets.begin(), data_input_datasets.end(), std::back_inserter(data_input_datasets_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), data_input_datasets_handles.data(), data_input_datasets.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), data_input_datasets_handles.data(), static_cast<int>(data_input_datasets.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "N", data_input_datasets.size());
@@ -8018,13 +8044,13 @@ inline tensor experimental_ignore_errors_dataset(const tensor& input_dataset, co
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8074,13 +8100,13 @@ inline tensor experimental_l_m_d_b_dataset(const tensor& filenames, const std::v
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8110,13 +8136,13 @@ inline tensor experimental_latency_stats_dataset(const tensor& input_dataset, co
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8170,13 +8196,13 @@ inline tensor experimental_max_intra_op_parallelism_dataset(const tensor& input_
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8202,13 +8228,13 @@ inline tensor experimental_non_serializable_dataset(const tensor& input_dataset,
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8239,7 +8265,7 @@ inline tensor experimental_parse_example_dataset(const tensor& input_dataset, co
     
     std::vector<TFE_TensorHandle*> dense_defaults_handles; dense_defaults_handles.reserve(dense_defaults.size());
     std::transform(dense_defaults.begin(), dense_defaults.end(), std::back_inserter(dense_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), dense_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), static_cast<int>(dense_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8247,30 +8273,30 @@ inline tensor experimental_parse_example_dataset(const tensor& input_dataset, co
     
     std::vector<std::size_t> sparse_keys_sizes; sparse_keys_sizes.reserve(sparse_keys.size());
     std::transform(sparse_keys.begin(), sparse_keys.end(), std::back_inserter(sparse_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), sparse_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), static_cast<int>(sparse_keys.size()));
     
     
     std::vector<std::size_t> dense_keys_sizes; dense_keys_sizes.reserve(dense_keys.size());
     std::transform(dense_keys.begin(), dense_keys.end(), std::back_inserter(dense_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), dense_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), static_cast<int>(dense_keys.size()));
     
-    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), sparse_types.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), Tdense.size());
+    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), static_cast<int>(sparse_types.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), static_cast<int>(Tdense.size()));
     
     std::vector<const int64_t*> dense_shapes_values; dense_shapes_values.reserve(dense_shapes.size());
     std::vector<int> dense_shapes_ndims; dense_shapes_ndims.reserve(dense_shapes.size());
     std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), dense_shapes.size(), context::get_status());
+    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), static_cast<int>(dense_shapes.size()), context::get_status());
     status_check(context::get_status());
     
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "sloppy", (unsigned char)sloppy);
@@ -8301,13 +8327,13 @@ inline tensor experimental_private_thread_pool_dataset(const tensor& input_datas
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8337,13 +8363,13 @@ inline tensor experimental_random_dataset(const tensor& seed, const tensor& seed
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8373,13 +8399,13 @@ inline tensor experimental_rebatch_dataset(const tensor& input_dataset, const te
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "use_fallback", (unsigned char)use_fallback);
@@ -8418,13 +8444,13 @@ inline tensor experimental_set_stats_aggregator_dataset(const tensor& input_data
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8454,13 +8480,13 @@ inline tensor experimental_sleep_dataset(const tensor& input_dataset, const tens
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8498,13 +8524,13 @@ inline tensor experimental_sliding_window_dataset(const tensor& input_dataset, c
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8538,13 +8564,13 @@ inline tensor experimental_sql_dataset(const tensor& driver_name, const tensor& 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8620,13 +8646,13 @@ inline tensor experimental_thread_pool_dataset(const tensor& input_dataset, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8677,13 +8703,13 @@ inline tensor experimental_unbatch_dataset(const tensor& input_dataset, const st
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8709,13 +8735,13 @@ inline tensor experimental_unique_dataset(const tensor& input_dataset, const std
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -8859,9 +8885,9 @@ inline tensor extract_image_patches(const tensor& images, const std::vector<int6
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksizes", ksizes.data(), ksizes.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
-    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), rates.size());
+    TFE_OpSetAttrIntList(op.get(), "ksizes", ksizes.data(), static_cast<int>(ksizes.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
+    TFE_OpSetAttrIntList(op.get(), "rates", rates.data(), static_cast<int>(rates.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -8910,8 +8936,8 @@ inline tensor extract_volume_patches(const tensor& input, const std::vector<int6
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksizes", ksizes.data(), ksizes.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksizes", ksizes.data(), static_cast<int>(ksizes.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -9005,13 +9031,13 @@ inline tensor f_i_f_o_queue(const std::vector<datatype>& component_types, const 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -9037,13 +9063,13 @@ inline tensor f_i_f_o_queue_v2(const std::vector<datatype>& component_types, con
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -9092,7 +9118,7 @@ inline tensor fake_param(datatype dtype, const std::vector<int64_t>& shape) {
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -9294,13 +9320,13 @@ inline tensor filter_by_last_component_dataset(const tensor& input_dataset, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -9704,7 +9730,7 @@ inline tensor fused_pad_conv2_d(const tensor& input, const tensor& paddings, con
 
     // Attributes
     TFE_OpSetAttrString(op.get(), "mode", (void*) mode.c_str(), mode.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
 
     // Execute Op
@@ -9742,7 +9768,7 @@ inline tensor fused_resize_and_pad_conv2_d(const tensor& input, const tensor& si
 
     // Attributes
     TFE_OpSetAttrString(op.get(), "mode", (void*) mode.c_str(), mode.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrBool(op.get(), "resize_align_corners", (unsigned char)resize_align_corners);
 
@@ -10328,7 +10354,7 @@ inline tensor identity_n(const std::vector<tensor>&input) {
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -10485,13 +10511,13 @@ inline tensor ignore_errors_dataset(const tensor& input_dataset, const std::vect
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -10606,7 +10632,7 @@ inline tensor immutable_const_tensor(datatype dtype, const std::vector<int64_t>&
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "memory_region_name", (void*) memory_region_name.c_str(), memory_region_name.size());
@@ -10692,7 +10718,7 @@ inline tensor infeed_dequeue(datatype dtype, const std::vector<int64_t>& shape) 
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -10715,13 +10741,13 @@ inline tensor infeed_dequeue_tuple(const std::vector<datatype>& dtypes, const st
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11086,13 +11112,13 @@ inline tensor iterator(const std::string& shared_name, const std::string& contai
     // Attributes
     TFE_OpSetAttrString(op.get(), "shared_name", (void*) shared_name.c_str(), shared_name.size());
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11118,13 +11144,13 @@ inline tensor iterator_from_string_handle(const tensor& string_handle, const std
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11150,13 +11176,13 @@ inline tensor iterator_from_string_handle_v2(const tensor& string_handle, const 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11206,13 +11232,13 @@ inline tensor iterator_get_next(const tensor& iterator, const std::vector<dataty
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11238,13 +11264,13 @@ inline tensor iterator_get_next_as_optional(const tensor& iterator, const std::v
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11270,13 +11296,13 @@ inline tensor iterator_get_next_sync(const tensor& iterator, const std::vector<d
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11325,13 +11351,13 @@ inline tensor iterator_v2(const std::string& shared_name, const std::string& con
     // Attributes
     TFE_OpSetAttrString(op.get(), "shared_name", (void*) shared_name.c_str(), shared_name.size());
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11381,13 +11407,13 @@ inline tensor l_m_d_b_dataset(const tensor& filenames, const std::vector<datatyp
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -11501,13 +11527,13 @@ inline tensor latency_stats_dataset(const tensor& input_dataset, const tensor& t
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -12082,7 +12108,7 @@ inline tensor map_incomplete_size(const std::vector<datatype>& dtypes, int64_t c
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -12114,7 +12140,7 @@ inline tensor map_peek(const tensor& key, const tensor& indices, const std::vect
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -12139,7 +12165,7 @@ inline tensor map_size(const std::vector<datatype>& dtypes, int64_t capacity=0, 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -12171,7 +12197,7 @@ inline tensor map_unstage(const tensor& key, const tensor& indices, const std::v
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -12834,13 +12860,13 @@ inline tensor max_intra_op_parallelism_dataset(const tensor& input_dataset, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -12866,8 +12892,8 @@ inline tensor max_pool(const tensor& input, const std::vector<int64_t>& ksize, c
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -12893,8 +12919,8 @@ inline tensor max_pool3_d(const tensor& input, const std::vector<int64_t>& ksize
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -12928,8 +12954,8 @@ inline tensor max_pool3_d_grad(const tensor& orig_input, const tensor& orig_outp
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
     TFE_OpSetAttrType(op.get(), "TInput", TInput);
@@ -12964,8 +12990,8 @@ inline tensor max_pool3_d_grad_grad(const tensor& orig_input, const tensor& orig
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -12999,8 +13025,8 @@ inline tensor max_pool_grad(const tensor& orig_input, const tensor& orig_output,
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -13034,8 +13060,8 @@ inline tensor max_pool_grad_grad(const tensor& orig_input, const tensor& orig_ou
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op.get(), "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -13110,8 +13136,8 @@ inline tensor max_pool_grad_grad_with_argmax(const tensor& input, const tensor& 
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrType(op.get(), "Targmax", Targmax);
     TFE_OpSetAttrBool(op.get(), "include_batch_in_index", (unsigned char)include_batch_in_index);
@@ -13187,8 +13213,8 @@ inline tensor max_pool_grad_with_argmax(const tensor& input, const tensor& grad,
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), ksize.size());
-    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), strides.size());
+    TFE_OpSetAttrIntList(op.get(), "ksize", ksize.data(), static_cast<int>(ksize.size()));
+    TFE_OpSetAttrIntList(op.get(), "strides", strides.data(), static_cast<int>(strides.size()));
     TFE_OpSetAttrString(op.get(), "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrType(op.get(), "Targmax", Targmax);
     TFE_OpSetAttrBool(op.get(), "include_batch_in_index", (unsigned char)include_batch_in_index);
@@ -13302,7 +13328,7 @@ inline tensor merge_summary(const std::vector<tensor>&inputs) {
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -13505,13 +13531,13 @@ inline tensor model_dataset(const tensor& input_dataset, const std::vector<datat
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "algorithm", algorithm);
@@ -13595,17 +13621,17 @@ inline tensor multi_device_iterator(const std::vector< std::string>& devices, co
     
     std::vector<std::size_t> devices_sizes; devices_sizes.reserve(devices.size());
     std::transform(devices.begin(), devices.end(), std::back_inserter(devices_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "devices", reinterpret_cast<const void *const *>(devices.data()), devices_sizes.data(), devices.size());
+    TFE_OpSetAttrStringList(op.get(), "devices", reinterpret_cast<const void *const *>(devices.data()), devices_sizes.data(), static_cast<int>(devices.size()));
     
     TFE_OpSetAttrString(op.get(), "shared_name", (void*) shared_name.c_str(), shared_name.size());
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -13631,13 +13657,13 @@ inline tensor multi_device_iterator_from_string_handle(const tensor& string_hand
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -13671,13 +13697,13 @@ inline tensor multi_device_iterator_get_next_from_shard(const tensor& multi_devi
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -13792,7 +13818,7 @@ inline tensor mutable_dense_hash_table(const tensor& empty_key, datatype key_dty
     TFE_OpSetAttrType(op.get(), "key_dtype", key_dtype);
     TFE_OpSetAttrType(op.get(), "value_dtype", value_dtype);
     
-    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), value_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), static_cast<int>(value_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -13830,7 +13856,7 @@ inline tensor mutable_dense_hash_table_v2(const tensor& empty_key, const tensor&
     TFE_OpSetAttrType(op.get(), "key_dtype", key_dtype);
     TFE_OpSetAttrType(op.get(), "value_dtype", value_dtype);
     
-    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), value_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), static_cast<int>(value_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -13886,7 +13912,7 @@ inline tensor mutable_hash_table_of_tensors(datatype key_dtype, datatype value_d
     TFE_OpSetAttrType(op.get(), "key_dtype", key_dtype);
     TFE_OpSetAttrType(op.get(), "value_dtype", value_dtype);
     
-    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), value_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), static_cast<int>(value_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -13915,7 +13941,7 @@ inline tensor mutable_hash_table_of_tensors_v2(datatype key_dtype, datatype valu
     TFE_OpSetAttrType(op.get(), "key_dtype", key_dtype);
     TFE_OpSetAttrType(op.get(), "value_dtype", value_dtype);
     
-    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), value_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "value_shape", value_shape.data(), static_cast<int>(value_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -14042,7 +14068,7 @@ inline tensor nccl_broadcast(const tensor& input, const std::vector<int64_t>& sh
 
     // Attributes
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -14065,7 +14091,7 @@ inline tensor nccl_reduce(const std::vector<tensor>&input, const std::string& re
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -14368,13 +14394,13 @@ inline tensor non_serializable_dataset(const tensor& input_dataset, const std::v
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -14521,19 +14547,19 @@ inline tensor optimize_dataset(const tensor& input_dataset, const tensor& optimi
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<std::size_t> optimization_configs_sizes; optimization_configs_sizes.reserve(optimization_configs.size());
     std::transform(optimization_configs.begin(), optimization_configs.end(), std::back_inserter(optimization_configs_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "optimization_configs", reinterpret_cast<const void *const *>(optimization_configs.data()), optimization_configs_sizes.data(), optimization_configs.size());
+    TFE_OpSetAttrStringList(op.get(), "optimization_configs", reinterpret_cast<const void *const *>(optimization_configs.data()), optimization_configs_sizes.data(), static_cast<int>(optimization_configs.size()));
     
 
     // Execute Op
@@ -14555,12 +14581,12 @@ inline tensor optional_from_value(const std::vector<tensor>&components, const st
     
     std::vector<TFE_TensorHandle*> components_handles; components_handles.reserve(components.size());
     std::transform(components.begin(), components.end(), std::back_inserter(components_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), components_handles.data(), components.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), components_handles.data(), static_cast<int>(components.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), Toutput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), static_cast<int>(Toutput_types.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -14584,13 +14610,13 @@ inline tensor optional_get_value(const tensor& optional, const std::vector<datat
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -14658,7 +14684,7 @@ inline tensor ordered_map_incomplete_size(const std::vector<datatype>& dtypes, i
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -14690,7 +14716,7 @@ inline tensor ordered_map_peek(const tensor& key, const tensor& indices, const s
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -14715,7 +14741,7 @@ inline tensor ordered_map_size(const std::vector<datatype>& dtypes, int64_t capa
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -14747,7 +14773,7 @@ inline tensor ordered_map_unstage(const tensor& key, const tensor& indices, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -14774,7 +14800,7 @@ inline tensor outfeed_dequeue(datatype dtype, const std::vector<int64_t>& shape,
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "device_ordinal", device_ordinal);
@@ -14798,13 +14824,13 @@ inline tensor outfeed_dequeue_tuple(const std::vector<datatype>& dtypes, const s
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "device_ordinal", device_ordinal);
@@ -14828,7 +14854,7 @@ inline tensor pack(const std::vector<tensor>&values, int64_t axis=0) {
     
     std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), values_handles.data(), static_cast<int>(values.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -14923,24 +14949,24 @@ inline tensor padded_batch_dataset(const tensor& input_dataset, const tensor& ba
     
     std::vector<TFE_TensorHandle*> padded_shapes_handles; padded_shapes_handles.reserve(padded_shapes.size());
     std::transform(padded_shapes.begin(), padded_shapes.end(), std::back_inserter(padded_shapes_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), padded_shapes_handles.data(), padded_shapes.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), padded_shapes_handles.data(), static_cast<int>(padded_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> padding_values_handles; padding_values_handles.reserve(padding_values.size());
     std::transform(padding_values.begin(), padding_values.end(), std::back_inserter(padding_values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), padding_values_handles.data(), padding_values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), padding_values_handles.data(), static_cast<int>(padding_values.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), Toutput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), static_cast<int>(Toutput_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "N", padded_shapes.size());
@@ -14972,13 +14998,13 @@ inline tensor padded_batch_dataset_v2(const tensor& input_dataset, const tensor&
     
     std::vector<TFE_TensorHandle*> padded_shapes_handles; padded_shapes_handles.reserve(padded_shapes.size());
     std::transform(padded_shapes.begin(), padded_shapes.end(), std::back_inserter(padded_shapes_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), padded_shapes_handles.data(), padded_shapes.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), padded_shapes_handles.data(), static_cast<int>(padded_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> padding_values_handles; padding_values_handles.reserve(padding_values.size());
     std::transform(padding_values.begin(), padding_values.end(), std::back_inserter(padding_values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), padding_values_handles.data(), padding_values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), padding_values_handles.data(), static_cast<int>(padding_values.size()), context::get_status());
     status_check(context::get_status());
     
     
@@ -14987,13 +15013,13 @@ inline tensor padded_batch_dataset_v2(const tensor& input_dataset, const tensor&
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), Toutput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), static_cast<int>(Toutput_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "N", padded_shapes.size());
@@ -15018,13 +15044,13 @@ inline tensor padding_f_i_f_o_queue(const std::vector<datatype>& component_types
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -15050,13 +15076,13 @@ inline tensor padding_f_i_f_o_queue_v2(const std::vector<datatype>& component_ty
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -15082,14 +15108,14 @@ inline tensor parallel_concat(const std::vector<tensor>&values, const std::vecto
     
     std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), values_handles.data(), static_cast<int>(values.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrInt(op.get(), "N", values.size());
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15112,13 +15138,13 @@ inline tensor parallel_dynamic_stitch(const std::vector<tensor>&indices, const s
     
     std::vector<TFE_TensorHandle*> indices_handles; indices_handles.reserve(indices.size());
     std::transform(indices.begin(), indices.end(), std::back_inserter(indices_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), indices_handles.data(), indices.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), indices_handles.data(), static_cast<int>(indices.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<TFE_TensorHandle*> data_handles; data_handles.reserve(data.size());
     std::transform(data.begin(), data.end(), std::back_inserter(data_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), data_handles.data(), data.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), data_handles.data(), static_cast<int>(data.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15194,7 +15220,7 @@ inline tensor parse_example_dataset(const tensor& input_dataset, const tensor& n
     
     std::vector<TFE_TensorHandle*> dense_defaults_handles; dense_defaults_handles.reserve(dense_defaults.size());
     std::transform(dense_defaults.begin(), dense_defaults.end(), std::back_inserter(dense_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), dense_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), static_cast<int>(dense_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15202,39 +15228,39 @@ inline tensor parse_example_dataset(const tensor& input_dataset, const tensor& n
     
     std::vector<std::size_t> sparse_keys_sizes; sparse_keys_sizes.reserve(sparse_keys.size());
     std::transform(sparse_keys.begin(), sparse_keys.end(), std::back_inserter(sparse_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), sparse_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), static_cast<int>(sparse_keys.size()));
     
     
     std::vector<std::size_t> dense_keys_sizes; dense_keys_sizes.reserve(dense_keys.size());
     std::transform(dense_keys.begin(), dense_keys.end(), std::back_inserter(dense_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), dense_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), static_cast<int>(dense_keys.size()));
     
-    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), sparse_types.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), Tdense.size());
+    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), static_cast<int>(sparse_types.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), static_cast<int>(Tdense.size()));
     
     std::vector<const int64_t*> dense_shapes_values; dense_shapes_values.reserve(dense_shapes.size());
     std::vector<int> dense_shapes_ndims; dense_shapes_ndims.reserve(dense_shapes.size());
     std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), dense_shapes.size(), context::get_status());
+    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), static_cast<int>(dense_shapes.size()), context::get_status());
     status_check(context::get_status());
     
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<std::size_t> ragged_keys_sizes; ragged_keys_sizes.reserve(ragged_keys.size());
     std::transform(ragged_keys.begin(), ragged_keys.end(), std::back_inserter(ragged_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "ragged_keys", reinterpret_cast<const void *const *>(ragged_keys.data()), ragged_keys_sizes.data(), ragged_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "ragged_keys", reinterpret_cast<const void *const *>(ragged_keys.data()), ragged_keys_sizes.data(), static_cast<int>(ragged_keys.size()));
     
-    TFE_OpSetAttrTypeList(op.get(), "ragged_value_types", reinterpret_cast<const enum TF_DataType *>(ragged_value_types.data()), ragged_value_types.size());
-    TFE_OpSetAttrTypeList(op.get(), "ragged_split_types", reinterpret_cast<const enum TF_DataType *>(ragged_split_types.data()), ragged_split_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "ragged_value_types", reinterpret_cast<const enum TF_DataType *>(ragged_value_types.data()), static_cast<int>(ragged_value_types.size()));
+    TFE_OpSetAttrTypeList(op.get(), "ragged_split_types", reinterpret_cast<const enum TF_DataType *>(ragged_split_types.data()), static_cast<int>(ragged_split_types.size()));
     TFE_OpSetAttrBool(op.get(), "sloppy", (unsigned char)sloppy);
 
     // Execute Op
@@ -15264,7 +15290,7 @@ inline tensor parse_example_dataset_v2(const tensor& input_dataset, const tensor
     
     std::vector<TFE_TensorHandle*> dense_defaults_handles; dense_defaults_handles.reserve(dense_defaults.size());
     std::transform(dense_defaults.begin(), dense_defaults.end(), std::back_inserter(dense_defaults_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), dense_defaults.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), dense_defaults_handles.data(), static_cast<int>(dense_defaults.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15272,39 +15298,39 @@ inline tensor parse_example_dataset_v2(const tensor& input_dataset, const tensor
     
     std::vector<std::size_t> sparse_keys_sizes; sparse_keys_sizes.reserve(sparse_keys.size());
     std::transform(sparse_keys.begin(), sparse_keys.end(), std::back_inserter(sparse_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), sparse_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "sparse_keys", reinterpret_cast<const void *const *>(sparse_keys.data()), sparse_keys_sizes.data(), static_cast<int>(sparse_keys.size()));
     
     
     std::vector<std::size_t> dense_keys_sizes; dense_keys_sizes.reserve(dense_keys.size());
     std::transform(dense_keys.begin(), dense_keys.end(), std::back_inserter(dense_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), dense_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "dense_keys", reinterpret_cast<const void *const *>(dense_keys.data()), dense_keys_sizes.data(), static_cast<int>(dense_keys.size()));
     
-    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), sparse_types.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), Tdense.size());
+    TFE_OpSetAttrTypeList(op.get(), "sparse_types", reinterpret_cast<const enum TF_DataType *>(sparse_types.data()), static_cast<int>(sparse_types.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tdense", reinterpret_cast<const enum TF_DataType *>(Tdense.data()), static_cast<int>(Tdense.size()));
     
     std::vector<const int64_t*> dense_shapes_values; dense_shapes_values.reserve(dense_shapes.size());
     std::vector<int> dense_shapes_ndims; dense_shapes_ndims.reserve(dense_shapes.size());
     std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), dense_shapes.size(), context::get_status());
+    std::transform(dense_shapes.begin(), dense_shapes.end(), std::back_inserter(dense_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "dense_shapes", dense_shapes_values.data(), dense_shapes_ndims.data(), static_cast<int>(dense_shapes.size()), context::get_status());
     status_check(context::get_status());
     
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<std::size_t> ragged_keys_sizes; ragged_keys_sizes.reserve(ragged_keys.size());
     std::transform(ragged_keys.begin(), ragged_keys.end(), std::back_inserter(ragged_keys_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "ragged_keys", reinterpret_cast<const void *const *>(ragged_keys.data()), ragged_keys_sizes.data(), ragged_keys.size());
+    TFE_OpSetAttrStringList(op.get(), "ragged_keys", reinterpret_cast<const void *const *>(ragged_keys.data()), ragged_keys_sizes.data(), static_cast<int>(ragged_keys.size()));
     
-    TFE_OpSetAttrTypeList(op.get(), "ragged_value_types", reinterpret_cast<const enum TF_DataType *>(ragged_value_types.data()), ragged_value_types.size());
-    TFE_OpSetAttrTypeList(op.get(), "ragged_split_types", reinterpret_cast<const enum TF_DataType *>(ragged_split_types.data()), ragged_split_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "ragged_value_types", reinterpret_cast<const enum TF_DataType *>(ragged_value_types.data()), static_cast<int>(ragged_value_types.size()));
+    TFE_OpSetAttrTypeList(op.get(), "ragged_split_types", reinterpret_cast<const enum TF_DataType *>(ragged_split_types.data()), static_cast<int>(ragged_split_types.size()));
     TFE_OpSetAttrString(op.get(), "deterministic", (void*) deterministic.c_str(), deterministic.size());
 
     // Execute Op
@@ -15352,7 +15378,7 @@ inline tensor placeholder(datatype dtype, const std::vector<int64_t>& shape) {
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15377,7 +15403,7 @@ inline tensor placeholder_v2(datatype dtype, const std::vector<int64_t>& shape) 
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15405,7 +15431,7 @@ inline tensor placeholder_with_default(const tensor& input, datatype dtype, cons
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15515,13 +15541,13 @@ inline tensor prefetch_dataset(const tensor& input_dataset, const tensor& buffer
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "slack_period", slack_period);
@@ -15551,10 +15577,10 @@ inline tensor prelinearize(const tensor& input, datatype dtype, const std::vecto
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
-    TFE_OpSetAttrIntList(op.get(), "layout", layout.data(), layout.size());
+    TFE_OpSetAttrIntList(op.get(), "layout", layout.data(), static_cast<int>(layout.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -15575,21 +15601,21 @@ inline tensor prelinearize_tuple(const std::vector<tensor>&inputs, const std::ve
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
-    TFE_OpSetAttrIntList(op.get(), "layouts", layouts.data(), layouts.size());
+    TFE_OpSetAttrIntList(op.get(), "layouts", layouts.data(), static_cast<int>(layouts.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -15638,12 +15664,12 @@ inline tensor print(const tensor& input, const std::vector<tensor>&data, const s
     
     std::vector<TFE_TensorHandle*> data_handles; data_handles.reserve(data.size());
     std::transform(data.begin(), data.end(), std::back_inserter(data_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), data_handles.data(), data.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), data_handles.data(), static_cast<int>(data.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "U", reinterpret_cast<const enum TF_DataType *>(U.data()), U.size());
+    TFE_OpSetAttrTypeList(op.get(), "U", reinterpret_cast<const enum TF_DataType *>(U.data()), static_cast<int>(U.size()));
     TFE_OpSetAttrString(op.get(), "message", (void*) message.c_str(), message.size());
     TFE_OpSetAttrInt(op.get(), "first_n", first_n);
     TFE_OpSetAttrInt(op.get(), "summarize", summarize);
@@ -15667,13 +15693,13 @@ inline tensor priority_queue(const std::vector<datatype>& component_types, const
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -15699,13 +15725,13 @@ inline tensor priority_queue_v2(const std::vector<datatype>& component_types, co
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -15738,13 +15764,13 @@ inline tensor private_thread_pool_dataset(const tensor& input_dataset, const ten
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -15796,14 +15822,14 @@ inline tensor py_func(const std::vector<tensor>&input, const std::string& token,
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrString(op.get(), "token", (void*) token.c_str(), token.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), Tin.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), Tout.size());
+    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), static_cast<int>(Tin.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), static_cast<int>(Tout.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -15824,14 +15850,14 @@ inline tensor py_func_stateless(const std::vector<tensor>&input, const std::stri
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrString(op.get(), "token", (void*) token.c_str(), token.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), Tin.size());
-    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), Tout.size());
+    TFE_OpSetAttrTypeList(op.get(), "Tin", reinterpret_cast<const enum TF_DataType *>(Tin.data()), static_cast<int>(Tin.size()));
+    TFE_OpSetAttrTypeList(op.get(), "Tout", reinterpret_cast<const enum TF_DataType *>(Tout.data()), static_cast<int>(Tout.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -16021,7 +16047,7 @@ inline tensor queue_dequeue(const tensor& handle, const std::vector<datatype>& c
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16050,7 +16076,7 @@ inline tensor queue_dequeue_many(const tensor& handle, const tensor& n, const st
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16079,7 +16105,7 @@ inline tensor queue_dequeue_many_v2(const tensor& handle, const tensor& n, const
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16108,7 +16134,7 @@ inline tensor queue_dequeue_up_to(const tensor& handle, const tensor& n, const s
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16137,7 +16163,7 @@ inline tensor queue_dequeue_up_to_v2(const tensor& handle, const tensor& n, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16162,7 +16188,7 @@ inline tensor queue_dequeue_v2(const tensor& handle, const std::vector<datatype>
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     TFE_OpSetAttrInt(op.get(), "timeout_ms", timeout_ms);
 
     // Execute Op
@@ -16440,7 +16466,7 @@ inline tensor ragged_tensor_to_tensor(const tensor& shape, const tensor& values,
     
     std::vector<TFE_TensorHandle*> row_partition_tensors_handles; row_partition_tensors_handles.reserve(row_partition_tensors.size());
     std::transform(row_partition_tensors.begin(), row_partition_tensors.end(), std::back_inserter(row_partition_tensors_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), row_partition_tensors_handles.data(), row_partition_tensors.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), row_partition_tensors_handles.data(), static_cast<int>(row_partition_tensors.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -16451,7 +16477,7 @@ inline tensor ragged_tensor_to_tensor(const tensor& shape, const tensor& values,
     
     std::vector<std::size_t> row_partition_types_sizes; row_partition_types_sizes.reserve(row_partition_types.size());
     std::transform(row_partition_types.begin(), row_partition_types.end(), std::back_inserter(row_partition_types_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "row_partition_types", reinterpret_cast<const void *const *>(row_partition_types.data()), row_partition_types_sizes.data(), row_partition_types.size());
+    TFE_OpSetAttrStringList(op.get(), "row_partition_types", reinterpret_cast<const void *const *>(row_partition_types.data()), row_partition_types_sizes.data(), static_cast<int>(row_partition_types.size()));
     
 
     // Execute Op
@@ -16473,7 +16499,7 @@ inline tensor ragged_tensor_to_variant(const std::vector<tensor>&rt_nested_split
     
     std::vector<TFE_TensorHandle*> rt_nested_splits_handles; rt_nested_splits_handles.reserve(rt_nested_splits.size());
     std::transform(rt_nested_splits.begin(), rt_nested_splits.end(), std::back_inserter(rt_nested_splits_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), rt_nested_splits_handles.data(), rt_nested_splits.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), rt_nested_splits_handles.data(), static_cast<int>(rt_nested_splits.size()), context::get_status());
     status_check(context::get_status());
     
     
@@ -16542,13 +16568,13 @@ inline tensor random_dataset(const tensor& seed, const tensor& seed2, const std:
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -16717,13 +16743,13 @@ inline tensor random_shuffle_queue(const std::vector<datatype>& component_types,
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -16752,13 +16778,13 @@ inline tensor random_shuffle_queue_v2(const std::vector<datatype>& component_typ
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), component_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), static_cast<int>(component_types.size()));
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve(shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve(shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
-    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), shapes.size(), context::get_status());
+    std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "shapes", shapes_values.data(), shapes_ndims.data(), static_cast<int>(shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
@@ -16916,13 +16942,13 @@ inline tensor range_dataset(const tensor& start, const tensor& stop, const tenso
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -17220,13 +17246,13 @@ inline tensor rebatch_dataset(const tensor& input_dataset, const tensor& num_rep
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "use_fallback", (unsigned char)use_fallback);
@@ -17508,7 +17534,7 @@ inline tensor ref_select(const tensor& index, const std::vector<tensor>&inputs) 
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -17737,13 +17763,13 @@ inline tensor repeat_dataset(const tensor& input_dataset, const tensor& count, c
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -18050,7 +18076,7 @@ inline tensor resource_conditional_accumulator(datatype dtype, const std::vector
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -18233,7 +18259,7 @@ inline tensor restore_v2(const tensor& prefix, const tensor& input_tensor_names,
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -18541,13 +18567,13 @@ inline tensor sampling_dataset(const tensor& input_dataset, const tensor& rate, 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -19595,13 +19621,13 @@ inline tensor set_stats_aggregator_dataset(const tensor& input_dataset, const te
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -19648,7 +19674,7 @@ inline tensor shape_n(const std::vector<tensor>&input, datatype out_type=static_
     
     std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_handles.data(), static_cast<int>(input.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -19686,13 +19712,13 @@ inline tensor shard_dataset(const tensor& input_dataset, const tensor& num_shard
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "require_non_empty", (unsigned char)require_non_empty);
@@ -19795,13 +19821,13 @@ inline tensor shuffle_and_repeat_dataset(const tensor& input_dataset, const tens
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "reshuffle_each_iteration", (unsigned char)reshuffle_each_iteration);
@@ -19848,13 +19874,13 @@ inline tensor shuffle_and_repeat_dataset_v2(const tensor& input_dataset, const t
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "reshuffle_each_iteration", (unsigned char)reshuffle_each_iteration);
@@ -19893,13 +19919,13 @@ inline tensor shuffle_dataset(const tensor& input_dataset, const tensor& buffer_
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "reshuffle_each_iteration", (unsigned char)reshuffle_each_iteration);
@@ -19934,13 +19960,13 @@ inline tensor shuffle_dataset_v2(const tensor& input_dataset, const tensor& buff
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -19982,13 +20008,13 @@ inline tensor shuffle_dataset_v3(const tensor& input_dataset, const tensor& buff
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "reshuffle_each_iteration", (unsigned char)reshuffle_each_iteration);
@@ -20167,13 +20193,13 @@ inline tensor skip_dataset(const tensor& input_dataset, const tensor& count, con
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -20203,13 +20229,13 @@ inline tensor sleep_dataset(const tensor& input_dataset, const tensor& sleep_mic
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -20279,13 +20305,13 @@ inline tensor sliding_window_dataset(const tensor& input_dataset, const tensor& 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -20339,13 +20365,13 @@ inline tensor snapshot_dataset(const tensor& input_dataset, const tensor& path, 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "compression", (void*) compression.c_str(), compression.size());
@@ -21248,7 +21274,7 @@ inline tensor sparse_conditional_accumulator(datatype dtype, const std::vector<i
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -22419,13 +22445,13 @@ inline tensor sql_dataset(const tensor& driver_name, const tensor& data_source_n
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -22555,7 +22581,7 @@ inline tensor squeeze(const tensor& input, const std::vector<int64_t>& squeeze_d
     
 
     // Attributes
-    TFE_OpSetAttrIntList(op.get(), "squeeze_dims", squeeze_dims.data(), squeeze_dims.size());
+    TFE_OpSetAttrIntList(op.get(), "squeeze_dims", squeeze_dims.data(), static_cast<int>(squeeze_dims.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -22730,7 +22756,7 @@ inline tensor stage_peek(const tensor& index, const std::vector<datatype>& dtype
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -22755,7 +22781,7 @@ inline tensor stage_size(const std::vector<datatype>& dtypes, int64_t capacity=0
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -23633,7 +23659,7 @@ inline tensor string_format(const std::vector<tensor>&inputs, const std::string&
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -23661,7 +23687,7 @@ inline tensor string_join(const std::vector<tensor>&inputs, const std::string& s
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -23812,7 +23838,7 @@ inline tensor string_to_hash_bucket_strong(const tensor& input, int64_t num_buck
 
     // Attributes
     TFE_OpSetAttrInt(op.get(), "num_buckets", num_buckets);
-    TFE_OpSetAttrIntList(op.get(), "key", key.data(), key.size());
+    TFE_OpSetAttrIntList(op.get(), "key", key.data(), static_cast<int>(key.size()));
 
     // Execute Op
     int num_outputs_op = 1;
@@ -24141,7 +24167,7 @@ inline tensor t_p_u_replicated_input(const std::vector<tensor>&inputs, bool is_m
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve(inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), inputs_handles.data(), inputs.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), inputs_handles.data(), static_cast<int>(inputs.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24201,13 +24227,13 @@ inline tensor take_dataset(const tensor& input_dataset, const tensor& count, con
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24307,7 +24333,7 @@ inline tensor temporary_variable(const std::vector<int64_t>& shape, datatype dty
 
     // Attributes
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
@@ -24337,7 +24363,7 @@ inline tensor tensor_array(const tensor& size, datatype dtype, const std::vector
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "dynamic_size", (unsigned char)dynamic_size);
@@ -24376,7 +24402,7 @@ inline tensor tensor_array_gather(const tensor& handle, const tensor& indices, c
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24412,7 +24438,7 @@ inline tensor tensor_array_gather_v2(const tensor& handle, const tensor& indices
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24448,7 +24474,7 @@ inline tensor tensor_array_gather_v3(const tensor& handle, const tensor& indices
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24536,7 +24562,7 @@ inline tensor tensor_array_pack(const tensor& handle, const tensor& flow_in, dat
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -24992,7 +25018,7 @@ inline tensor tensor_array_v2(const tensor& size, datatype dtype, const std::vec
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), element_shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "element_shape", element_shape.data(), static_cast<int>(element_shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrBool(op.get(), "dynamic_size", (unsigned char)dynamic_size);
@@ -25126,18 +25152,18 @@ inline tensor tensor_dataset(const std::vector<tensor>&components, const std::ve
     
     std::vector<TFE_TensorHandle*> components_handles; components_handles.reserve(components.size());
     std::transform(components.begin(), components.end(), std::back_inserter(components_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), components_handles.data(), components.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), components_handles.data(), static_cast<int>(components.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), Toutput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), static_cast<int>(Toutput_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -25798,18 +25824,18 @@ inline tensor tensor_slice_dataset(const std::vector<tensor>&components, const s
     
     std::vector<TFE_TensorHandle*> components_handles; components_handles.reserve(components.size());
     std::transform(components.begin(), components.end(), std::back_inserter(components_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), components_handles.data(), components.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), components_handles.data(), static_cast<int>(components.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), Toutput_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "Toutput_types", reinterpret_cast<const enum TF_DataType *>(Toutput_types.data()), static_cast<int>(Toutput_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -25883,7 +25909,7 @@ inline tensor tensor_summary(const tensor& input_tensor, const std::vector< std:
     
     std::vector<std::size_t> labels_sizes; labels_sizes.reserve(labels.size());
     std::transform(labels.begin(), labels.end(), std::back_inserter(labels_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "labels", reinterpret_cast<const void *const *>(labels.data()), labels_sizes.data(), labels.size());
+    TFE_OpSetAttrStringList(op.get(), "labels", reinterpret_cast<const void *const *>(labels.data()), labels_sizes.data(), static_cast<int>(labels.size()));
     
     TFE_OpSetAttrString(op.get(), "description", (void*) description.c_str(), description.size());
     TFE_OpSetAttrString(op.get(), "display_name", (void*) display_name.c_str(), display_name.size());
@@ -26024,13 +26050,13 @@ inline tensor thread_pool_dataset(const tensor& input_dataset, const tensor& thr
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -26390,13 +26416,13 @@ inline tensor unbatch_dataset(const tensor& input_dataset, const std::vector<dat
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -26459,13 +26485,13 @@ inline tensor uncompress_element(const tensor& compressed, const std::vector<dat
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -26574,13 +26600,13 @@ inline tensor unique_dataset(const tensor& input_dataset, const std::vector<data
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -26822,7 +26848,7 @@ inline tensor unstage(const std::vector<datatype>& dtypes, int64_t capacity=0, i
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), dtypes.size());
+    TFE_OpSetAttrTypeList(op.get(), "dtypes", reinterpret_cast<const enum TF_DataType *>(dtypes.data()), static_cast<int>(dtypes.size()));
     TFE_OpSetAttrInt(op.get(), "capacity", capacity);
     TFE_OpSetAttrInt(op.get(), "memory_limit", memory_limit);
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
@@ -26901,13 +26927,13 @@ inline tensor var_handle_op(datatype dtype, const std::vector<int64_t>& shape, c
     // Attributes
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     
     std::vector<std::size_t> allowed_devices_sizes; allowed_devices_sizes.reserve(allowed_devices.size());
     std::transform(allowed_devices.begin(), allowed_devices.end(), std::back_inserter(allowed_devices_sizes), [](const auto& s) { return s.size();});
-    TFE_OpSetAttrStringList(op.get(), "allowed_devices", reinterpret_cast<const void *const *>(allowed_devices.data()), allowed_devices_sizes.data(), allowed_devices.size());
+    TFE_OpSetAttrStringList(op.get(), "allowed_devices", reinterpret_cast<const void *const *>(allowed_devices.data()), allowed_devices_sizes.data(), static_cast<int>(allowed_devices.size()));
     
     TFE_OpSetAttrString(op.get(), "container", (void*) container.c_str(), container.size());
     TFE_OpSetAttrString(op.get(), "shared_name", (void*) shared_name.c_str(), shared_name.size());
@@ -26956,7 +26982,7 @@ inline tensor variable(const std::vector<int64_t>& shape, datatype dtype, const 
 
     // Attributes
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
@@ -27007,7 +27033,7 @@ inline tensor variable_v2(const std::vector<int64_t>& shape, datatype dtype, con
 
     // Attributes
     
-    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op.get(), "shape", shape.data(), static_cast<int>(shape.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrType(op.get(), "dtype", dtype);
@@ -27120,13 +27146,13 @@ inline tensor window_dataset(const tensor& input_dataset, const tensor& size, co
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
 
@@ -27333,18 +27359,18 @@ inline tensor zip_dataset(const std::vector<tensor>&input_datasets, const std::v
     
     std::vector<TFE_TensorHandle*> input_datasets_handles; input_datasets_handles.reserve(input_datasets.size());
     std::transform(input_datasets.begin(), input_datasets.end(), std::back_inserter(input_datasets_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), input_datasets.size(), context::get_status());
+    TFE_OpAddInputList(op.get(), input_datasets_handles.data(), static_cast<int>(input_datasets.size()), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), output_types.size());
+    TFE_OpSetAttrTypeList(op.get(), "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), static_cast<int>(output_types.size()));
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve(output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve(output_shapes.size());
     std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_values), [](const auto& v) { return v.data();});
-    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return v.size();});
-    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), output_shapes.size(), context::get_status());
+    std::transform(output_shapes.begin(), output_shapes.end(), std::back_inserter(output_shapes_ndims), [](const auto& v) { return static_cast<int>(v.size());});
+    TFE_OpSetAttrShapeList(op.get(), "output_shapes", output_shapes_values.data(), output_shapes_ndims.data(), static_cast<int>(output_shapes.size()), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op.get(), "N", input_datasets.size());
