@@ -9,16 +9,18 @@
  * Python-like strip() and split() functions for C++
  *  
 */
-
 namespace util {
 	inline std::string strip(const std::string &str,std::string ch=" "){
+
+        if(str.size() <= 0){ return str; }
+
 		unsigned int i = 0;
-		while (ch.find(str[i]) != std::string::npos)
+		while (i < str.size() && ch.find(str[i]) != std::string::npos)
 			i++;
-		unsigned int j = str.size() - 1;
-		while (ch.find(str[j]) != std::string::npos)
-			j--;		
-		return str.substr(i, j+1 -i );
+		unsigned int j = str.size();
+		while (j > 0 && ch.find(str[j-1]) != std::string::npos)
+			j--;
+		return str.substr(i, j);
 	}
 }
 
