@@ -36,6 +36,8 @@ public:
 
     bool prompt_next_move(move_vector& move, ostream& log, bool verbose = false);
 
+    void show_valid_moves(ostream& log, bool verbose = true);
+
     void apply_move(move_vector& move, ostream& log, bool verbose = false);
 
     void end_of_game_callback(ostream& log, bool verbose = false);
@@ -77,7 +79,7 @@ public:
     void clear_agent_cache(ostream& log, bool verbose);
 
     void get_training_data(chessnet_dataset& dataset);
-
+    
     double get_game_value(){ return game_value; }
 
 };

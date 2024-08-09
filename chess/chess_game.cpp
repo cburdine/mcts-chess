@@ -43,15 +43,34 @@ bool ChessPlayerAgent::prompt_next_move(move_vector& move, ostream& log, bool ve
 
     // handle invalid input:
     while(!parse_text_move(move,player_mcts.get_state(), agent_color, input_str)){
-        log << "The move \"" << input_str << "\" is invalid." << endl
-            << "Enter a move with the source and target rank & file." << endl
-            << "(e.g.: \"a2 a4\"):" << endl 
-            << ((agent_color == WHITE)? "White~> " : "Black~> ");
+        if(!util::strip(input_str).compare("?")){
+            show_valid_moves(log, verbose);
+        } else {
+            log << "The move \"" << input_str << "\" is invalid." << endl
+            << "Enter a move with the source and target rank & file" << endl
+            << "(e.g.: \"a2 a4\") or type \"?\" for a list of moves." << endl;
+        }
+        log << ((agent_color == WHITE)? "White~> " : "Black~> ");
         getline(input, input_str);
 
     }
 
     return true;
+}
+
+void ChessPlayerAgent::show_valid_moves(ostream& log, bool verbose){\
+    vector<move_vector> valid_moves = vector<move_vector>();
+    bool can_move = player_mcts.get_state_actions(valid_moves);
+    
+    if(verbose){
+        if(can_move){
+            for(move_vector m : valid_moves){
+                log << to_movestring(player_mcts.get_state(), m) << endl;
+            }
+        } else {
+            log << "No valid moves." << endl;
+        }
+    }
 }
 
 void ChessPlayerAgent::apply_move(move_vector& move, ostream& log, bool verbose){
