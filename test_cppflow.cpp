@@ -13,8 +13,8 @@ int main() {
     const int BATCH_SIZE = 10;
 
     // Load cppflow model and print operations:
-    cppflow::model model("jupyter/simple_chess_net_v2");
-    cppflow::model model2("jupyter/simple_chess_net");
+    cppflow::model model("jupyter/simple_chess_net_v3");
+    //cppflow::model model2("jupyter/simple_chess_net");
 
 
     // print model operations:
